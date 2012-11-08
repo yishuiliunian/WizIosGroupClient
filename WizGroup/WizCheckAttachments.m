@@ -14,6 +14,7 @@
 #import "WizNotificationCenter.h"
 #import "WizFileManager.h"
 #import "WizSyncCenter.h"
+#import "MBProgressHUD.h"
 
 @interface WizCheckAttachments () 
 {
@@ -104,6 +105,7 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -229,6 +231,7 @@
     else
     {
         willCheckInWiz = inWiz;
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         [[WizSyncCenter defaultCenter] downloadAttachment:attachment kbguid:self.kbguid accountUserId:self.accountUserId];
         [[WizNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadDone:) name:WizNMDidDownloadDocument object:nil];
     }
@@ -247,6 +250,7 @@
 
 - (void) downloadDone:(NSNotification*)nc
 {
+    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
     NSString* guid = [WizNotificationCenter getDocumentGuidFromNc:nc];
     if (guid == nil) {
         return;

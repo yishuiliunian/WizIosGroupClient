@@ -12,7 +12,6 @@
 @interface WizCheckAttachments : UITableViewController <UIAlertViewDelegate,UIDocumentInteractionControllerDelegate>
 {
     WizDocument* doc;
-    // pad
     id <WizPadCheckAttachmentDelegate> checkAttachmentDelegate;
     
 }
