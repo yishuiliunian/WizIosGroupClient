@@ -1,0 +1,3 @@
+[submodule "WizIosSDK"]
+	path = WizIosSDK
+	url = https://github.com/WizTeam/WizIosSDK.git
