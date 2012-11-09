@@ -16,9 +16,10 @@
 #import "WGSettingViewController.h"
 #import "WGNavigationBar.h"
 #import "PPRevealSideViewController.h"
-
+#import "WizNotificationCenter.h"
 #import "WGDetailViewController.h"
 #import "WGListViewController.h"
+#import "WizGlobals.h"
 
 #import "WizSyncCenter.h"
 
@@ -182,7 +183,7 @@
     [logoButton addSubview:loginLabel];
     [loginLabel release];
     
-    UIImageView* logoWordImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 90, 20)];
+    UIImageView* logoWordImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 76, 20)];
     logoWordImageView.image = [UIImage imageNamed:@"group_list_logol_words"];
     [logoButton addSubview:logoWordImageView];
     [logoWordImageView release];
