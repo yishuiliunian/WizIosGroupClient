@@ -419,13 +419,13 @@
     [ppSideController setDirectionsToShowBounce:PPRevealSideDirectionLeft];
     [ppSideController preloadViewController:detailCon forSide:PPRevealSideDirectionLeft];
  
-    CATransition *tran = [CATransition animation];
-    tran.duration = .4f;
-    tran.type = kCATransitionPush;
-    tran.subtype = kCATransitionFromTop; //Bottom for the opposite direction
-    tran.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
-    tran.removedOnCompletion  = YES;
-    [self.navigationController.view.layer addAnimation:tran forKey:@"TransitionDownUp"];
+//    CATransition *tran = [CATransition animation];
+//    tran.duration = .4f;
+//    tran.type = kCATransitionPush;
+//    tran.subtype = kCATransitionFromTop; //Bottom for the opposite direction
+//    tran.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
+//    tran.removedOnCompletion  = YES;
+//    [self.navigationController.view.layer addAnimation:tran forKey:@"TransitionDownUp"];
     [self.navigationController presentModalViewController:ppSideController animated:YES];
     
     [detailCon release];

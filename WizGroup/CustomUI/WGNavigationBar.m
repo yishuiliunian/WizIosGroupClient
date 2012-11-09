@@ -32,7 +32,7 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    UIImage* image = [UIImage imageNamed:@"navigationBackgroup1"];
+    UIImage* image = [UIImage imageNamed:@"app_nuvigationbar_baackground"];
     self.titleLabel.frame = CGRectMake(0.0, 0.0, self.frame.size.width, 40);
     [image drawInRect:CGRectMake(0.0, 0.0, self.frame.size.width, self.frame.size.height)];
 }
