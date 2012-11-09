@@ -315,7 +315,7 @@
 
 - (NSInteger) numberOfItemsInGMGridView:(GMGridView *)gridView
 {
-    return [groupsArray count] + 1;
+    return [groupsArray count] ;
 }
 - (CGSize) GMGridView:(GMGridView *)gridView sizeForItemsInInterfaceOrientation:(UIInterfaceOrientation)orientation
 {
@@ -327,32 +327,32 @@
     CGSize size = [self GMGridView:gridView sizeForItemsInInterfaceOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
     
     
-    if (index == [groupsArray count]) {
-        GMGridViewCell* cell = [[[GMGridViewCell alloc] initWithFrame:CGRectMake(0.0, 0.0, size.width, size.height)] autorelease];
-        
-        float labelWidth = 100;
-        float labelHeight = 20;
-        
-        
-        UILabel* addNewLabel = [[UILabel alloc] initWithFrame:CGRectMake((size.width-labelWidth)/2 + labelHeight, (size.height - labelHeight)/2, labelWidth, labelHeight)];
-        
-
-        
-        addNewLabel.font = [UIFont systemFontOfSize:16];
-        addNewLabel.textColor = [UIColor lightGrayColor];
-        addNewLabel.backgroundColor = [UIColor clearColor];
-        addNewLabel.text = NSLocalizedString(@"Add Group", nil);
-        [cell addSubview:addNewLabel];
-        [addNewLabel release];
-        //
-        UIImageView* addNewImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"addNewGroupIcon"]];
-        addNewImageView.frame = CGRectMake(addNewLabel.frame.origin.x - labelHeight, addNewLabel.frame.origin.y, labelHeight, labelHeight);
-        [cell addSubview:addNewImageView];
-        [addNewImageView release];
-        //
-        cell.backgroundColor = [UIColor colorWithRed:248/255.0 green:248/255.0 blue:248/255.0 alpha:1.0];
-        return cell;
-    }
+//    if (index == [groupsArray count]) {
+//        GMGridViewCell* cell = [[[GMGridViewCell alloc] initWithFrame:CGRectMake(0.0, 0.0, size.width, size.height)] autorelease];
+//        
+//        float labelWidth = 100;
+//        float labelHeight = 20;
+//        
+//        
+//        UILabel* addNewLabel = [[UILabel alloc] initWithFrame:CGRectMake((size.width-labelWidth)/2 + labelHeight, (size.height - labelHeight)/2, labelWidth, labelHeight)];
+//        
+//
+//        
+//        addNewLabel.font = [UIFont systemFontOfSize:16];
+//        addNewLabel.textColor = [UIColor lightGrayColor];
+//        addNewLabel.backgroundColor = [UIColor clearColor];
+//        addNewLabel.text = NSLocalizedString(@"Add Group", nil);
+//        [cell addSubview:addNewLabel];
+//        [addNewLabel release];
+//        //
+//        UIImageView* addNewImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"addNewGroupIcon"]];
+//        addNewImageView.frame = CGRectMake(addNewLabel.frame.origin.x - labelHeight, addNewLabel.frame.origin.y, labelHeight, labelHeight);
+//        [cell addSubview:addNewImageView];
+//        [addNewImageView release];
+//        //
+//        cell.backgroundColor = [UIColor colorWithRed:248/255.0 green:248/255.0 blue:248/255.0 alpha:1.0];
+//        return cell;
+//    }
     
     WGGridViewCell *cell = (WGGridViewCell*)[gridView dequeueReusableCell];
     if (!cell)
