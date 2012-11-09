@@ -30,12 +30,13 @@ static void handleRootException ( NSException* exception)
     
     
     // 这儿必须Hold住当前线程，等待日志线程将日志成功输出，当前线程再继续运行
-    sleep(1.0);
+    sleep(0.5);
 
     // 写一个文件，记录此时此刻发生了异常。这个挺有用的哦
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WizCrashHanppend];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
+
 
 
 @implementation WGAppDelegate
@@ -44,6 +45,15 @@ static void handleRootException ( NSException* exception)
 {
     [_window release];
     [super dealloc];
+}
+
+- (void) loadUrlImage
+{
+    NSURL* url = [NSURL URLWithString:@"http://www.baidu.com/img/baidu_sylogo1.gif"];
+    
+    NSData* data = [NSData dataWithContentsOfURL:url];
+    
+    NSLog(@"data %@",data);
 }
 
 - (void) showLastCrash

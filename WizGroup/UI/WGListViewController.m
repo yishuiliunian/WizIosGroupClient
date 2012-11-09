@@ -106,7 +106,7 @@
     id<WizMetaDataBaseDelegate> db = [[WizDbManager shareInstance] getMetaDataBaseForAccount:self.accountUserId kbGuid:self.kbGuid];
     [documentsArray addObjectsFromArray:[db recentDocuments]];
     
-    self.title = [NSString stringWithFormat:@"%@(%@)",self.kbGroup.kbName, NSLocalizedString(@"New", nil)];
+    self.title = [NSString stringWithFormat:@"%@(%@)",self.kbGroup.kbName, NSLocalizedString(@"Recent", nil)];
 }
 
 - (void) loadTagDocument
