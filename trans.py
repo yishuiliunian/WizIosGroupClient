@@ -3,10 +3,24 @@ import os
 import traceback
 import sys
 reload(sys)
+
+def findEnlproj(projectHome):
+    aimPath = "xx"
+    for i in os.listdir(projectHome):
+	 currentPath = projectHome + '/' + i 
+	 if os.path.isdir(currentPath):
+	     if not cmp(i,"en.lproj"):
+		 return currentPath
+	     else:
+		 path = findEnlproj(currentPath)
+		 if cmp (path, "xx"):
+		     aimPath = path
+    return aimPath
+
 sys.setdefaultencoding('utf-8')
 projectHome = os.getcwd()
-outPutDir = projectHome + '/WizGroup/en.lproj'
-sourceDir = projectHome + '/WizGroup'
+outPutDir = findEnlproj(projectHome) 
+
 dicFile = 'zh.txt'
 def genstrings(level, path):
 	for i in os.listdir(path):
@@ -18,9 +32,11 @@ def genstrings(level, path):
 			os.system('genstrings -a -o '+ outPutDir+' ' +path + '/'+i+'/*.mm')
 			genstrings(level+1,path+'/'+i)
 genstrings(0,sourceDir)
+
 transFile = codecs.open(dicFile,'r','utf-8')
 transLines = transFile.readlines()
 transDic = {}
+
 for line in transLines:
 	if(len(line)==0):
 		continue
@@ -55,10 +71,8 @@ for line in needFile.readlines():
 		en = en[0:en.index('"')]
 		zh=''
 		needTransDic[en]=zh
-print 'need trans dic len is'
-print  len(needTransDic)
-print 'dic len is'
-print len(transDic)
+
+
 for key in needTransDic.keys():
 	try:
 		needTransDic[key] = transDic[key]
