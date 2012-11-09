@@ -57,7 +57,7 @@
 "Share By Sms"="短信分享";
 "Syncing notes list"="同步笔记列表";
 "Back"="返回";
-"Logoin"="登陆";
+"Logoin"="登录";
 "Home"="主页面";
 "My Events"="我的事件";
 "Log"="日志";
@@ -98,7 +98,7 @@
 "Signing out"="正在注销";
 "There is no application can open this file."="您的系统中没有可以打开这种类型文件的程序！";
 "Yesterday"="昨天";
-"Login....."="登陆中....";
+"Login....."="登录中....";
 "Password"="密码";
 "Pull down to refresh..."="下拉以刷新";
 "Name"="名称";
@@ -108,7 +108,7 @@
 "Share with friends"="分享给朋友的笔记";
 "Please enter the password again!"="请再次输入密码！";
 "Syncing user information"="同步账号信息";
-"Login"="登陆";
+"Login"="登录";
 "No Title Photo"="无标题照片";
 "All"="全部";
 "No Title"="无标题";
@@ -120,4 +120,4 @@
 "Share By Email"="邮件分享";
 "Sync already in progress, please wait..."="已经在同步中，请耐心等待...";
 "Document format was too complex and can not be edited, and will use the old editor.If you choose to edit this note, images and text-formatting will be lost. Continue?"="文档格式太复杂无法使用新编辑器编辑，使用旧编辑器编辑将会丢失格式和图片，是否继续编辑？";
-"Click To Login"="点击以登陆";
+"Click To Login"="点击以登录";

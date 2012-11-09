@@ -5,12 +5,14 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>${PRODUCT_NAME}</string>
+	<string>WizGroup</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFiles</key>
 	<array>
 		<string>scb.png</string>
+		<string>wizgroup_logol.png</string>
+		<string>wizgroup_logol@2x(1).png</string>
 	</array>
 	<key>CFBundleIcons</key>
 	<dict>
@@ -19,6 +21,8 @@
 			<key>CFBundleIconFiles</key>
 			<array>
 				<string>scb.png</string>
+				<string>wizgroup_logol.png</string>
+				<string>wizgroup_logol@2x(1).png</string>
 			</array>
 		</dict>
 	</dict>
@@ -26,6 +30,11 @@
 	<string>cn.wiz.${PRODUCT_NAME:rfc1034identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>zh_CN</string>
+	</array>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundlePackageType</key>
@@ -36,7 +45,11 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
+	<key>LSHasLocalizedDisplayName</key>
+	<true/>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>

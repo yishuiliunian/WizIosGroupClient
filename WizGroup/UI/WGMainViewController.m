@@ -174,7 +174,7 @@
     [logolImageView release];
     UIButton* logoButton = [UIButton buttonWithType:UIButtonTypeCustom];
     float logoButtonWidth = 180;
-    UILabel* loginLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 21, logoButtonWidth, 20)];
+    UILabel* loginLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 22, logoButtonWidth, 20)];
     self.userNameLabel = loginLabel;
     loginLabel.backgroundColor = [UIColor clearColor];
     loginLabel.adjustsFontSizeToFitWidth = YES;

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		731365B4164131D400DA8692 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 731365B6164131D400DA8692 /* Localizable.strings */; };
-		73136756164143DF00DA8692 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 73136755164143DE00DA8692 /* Icon.png */; };
 		734CD8541616D9BE00FBC33C /* TreeNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 734CD8501616D7A400FBC33C /* TreeNode.m */; };
 		734CD8551616D9F400FBC33C /* WizPadTreeTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 734CD8531616D8BA00FBC33C /* WizPadTreeTableCell.m */; };
 		7362A3A71634DEC40031CFEE /* UINavigationBar+WizCustom.m in Sources */ = {isa = PBXBuildFile; fileRef = 7362A3A61634DEC40031CFEE /* UINavigationBar+WizCustom.m */; };
@@ -65,6 +64,8 @@
 		73FCE6241638F9E2006F597C /* WGLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 73FCE6231638F9E2006F597C /* WGLoginViewController.m */; };
 		873062A9164CEA200049F643 /* app_nuvigationbar_baackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 873062A7164CEA200049F643 /* app_nuvigationbar_baackground.png */; };
 		873062AA164CEA200049F643 /* app_nuvigationbar_baackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 873062A8164CEA200049F643 /* app_nuvigationbar_baackground@2x.png */; };
+		873062AF164CFA920049F643 /* wizgroup_logol.png in Resources */ = {isa = PBXBuildFile; fileRef = 873062AE164CFA920049F643 /* wizgroup_logol.png */; };
+		873062B5164D005D0049F643 /* wizgroup_logol@2x(1).png in Resources */ = {isa = PBXBuildFile; fileRef = 873062B4164D005D0049F643 /* wizgroup_logol@2x(1).png */; };
 		8775CB221647C0630002EE50 /* WGGroupListTileView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8775CB211647C0630002EE50 /* WGGroupListTileView.m */; };
 		8775CB2D1648C03A0002EE50 /* group_list_refresh1@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8775CB2C1648C03A0002EE50 /* group_list_refresh1@2x.png */; };
 		8775CB801648C06A0002EE50 /* group_list_refresh1.png in Resources */ = {isa = PBXBuildFile; fileRef = 8775CB7F1648C06A0002EE50 /* group_list_refresh1.png */; };
@@ -109,7 +110,6 @@
 		87AA2A7A164756BD00CF3D63 /* treePhoneItemOpened.png in Resources */ = {isa = PBXBuildFile; fileRef = 87AA2A55164756BD00CF3D63 /* treePhoneItemOpened.png */; };
 		87AA2A7B164756BD00CF3D63 /* treePhoneItemOpened@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87AA2A56164756BD00CF3D63 /* treePhoneItemOpened@2x.png */; };
 		87AA2A7C164756BD00CF3D63 /* user.png in Resources */ = {isa = PBXBuildFile; fileRef = 87AA2A57164756BD00CF3D63 /* user.png */; };
-		87B169CD164357D000C36731 /* scb.png in Resources */ = {isa = PBXBuildFile; fileRef = 87B169CC164357D000C36731 /* scb.png */; };
 		87B516A6164A08AC0032B06E /* SVModalWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87B516A2164A08AC0032B06E /* SVModalWebViewController.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		87B516A7164A08AC0032B06E /* SVWebViewController.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 87B516A3164A08AC0032B06E /* SVWebViewController.bundle */; };
 		87B516A8164A08AC0032B06E /* SVWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87B516A5164A08AC0032B06E /* SVWebViewController.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -207,8 +207,6 @@
 
 /* Begin PBXFileReference section */
 		731365B5164131D400DA8692 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		73136755164143DE00DA8692 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
-		73136757164143E300DA8692 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		734CD84F1616D7A400FBC33C /* TreeNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TreeNode.h; sourceTree = "<group>"; };
 		734CD8501616D7A400FBC33C /* TreeNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TreeNode.m; sourceTree = "<group>"; };
 		734CD8521616D8BA00FBC33C /* WizPadTreeTableCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WizPadTreeTableCell.h; sourceTree = "<group>"; };
@@ -306,6 +304,8 @@
 		73FCE6231638F9E2006F597C /* WGLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WGLoginViewController.m; path = UI/Account/WGLoginViewController.m; sourceTree = "<group>"; };
 		873062A7164CEA200049F643 /* app_nuvigationbar_baackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = app_nuvigationbar_baackground.png; sourceTree = "<group>"; };
 		873062A8164CEA200049F643 /* app_nuvigationbar_baackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app_nuvigationbar_baackground@2x.png"; sourceTree = "<group>"; };
+		873062AE164CFA920049F643 /* wizgroup_logol.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wizgroup_logol.png; sourceTree = "<group>"; };
+		873062B4164D005D0049F643 /* wizgroup_logol@2x(1).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "wizgroup_logol@2x(1).png"; sourceTree = "<group>"; };
 		8775CB201647C0630002EE50 /* WGGroupListTileView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WGGroupListTileView.h; path = UI/WGGroupListTileView.h; sourceTree = "<group>"; };
 		8775CB211647C0630002EE50 /* WGGroupListTileView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WGGroupListTileView.m; path = UI/WGGroupListTileView.m; sourceTree = "<group>"; };
 		8775CB2C1648C03A0002EE50 /* group_list_refresh1@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "group_list_refresh1@2x.png"; path = "Resources/group_list_refresh1@2x.png"; sourceTree = "<group>"; };
@@ -351,7 +351,6 @@
 		87AA2A55164756BD00CF3D63 /* treePhoneItemOpened.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = treePhoneItemOpened.png; path = Resources/treePhoneItemOpened.png; sourceTree = "<group>"; };
 		87AA2A56164756BD00CF3D63 /* treePhoneItemOpened@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "treePhoneItemOpened@2x.png"; path = "Resources/treePhoneItemOpened@2x.png"; sourceTree = "<group>"; };
 		87AA2A57164756BD00CF3D63 /* user.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = user.png; path = Resources/user.png; sourceTree = "<group>"; };
-		87B169CC164357D000C36731 /* scb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = scb.png; sourceTree = "<group>"; };
 		87B516A1164A08AC0032B06E /* SVModalWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVModalWebViewController.h; sourceTree = "<group>"; };
 		87B516A2164A08AC0032B06E /* SVModalWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVModalWebViewController.m; sourceTree = "<group>"; };
 		87B516A3164A08AC0032B06E /* SVWebViewController.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SVWebViewController.bundle; sourceTree = "<group>"; };
@@ -579,10 +578,9 @@
 		737286EC1616960F005A3A6B = {
 			isa = PBXGroup;
 			children = (
+				873062B4164D005D0049F643 /* wizgroup_logol@2x(1).png */,
+				873062AE164CFA920049F643 /* wizgroup_logol.png */,
 				87B516A9164A09470032B06E /* MessageUI.framework */,
-				87B169CC164357D000C36731 /* scb.png */,
-				73136757164143E300DA8692 /* Icon@2x.png */,
-				73136755164143DE00DA8692 /* Icon.png */,
 				73D7C678162FA61C00C27478 /* Default-568h@2x.png */,
 				737287011616960F005A3A6B /* WizGroup */,
 				737286FA1616960F005A3A6B /* Frameworks */,
@@ -1248,8 +1246,6 @@
 				73D983D2163B9C91006AAB22 /* whiteArrow@2x.png in Resources */,
 				73DC3E96163E28E3002BCDE5 /* toolbarBackgroud.png in Resources */,
 				731365B4164131D400DA8692 /* Localizable.strings in Resources */,
-				73136756164143DF00DA8692 /* Icon.png in Resources */,
-				87B169CD164357D000C36731 /* scb.png in Resources */,
 				87AA2A58164756BD00CF3D63 /* backToListIcon.png in Resources */,
 				87AA2A59164756BD00CF3D63 /* checkNextDoc.png in Resources */,
 				87AA2A5A164756BD00CF3D63 /* checkPreDoc.png in Resources */,
@@ -1314,6 +1310,8 @@
 				87FD276C164B9A2F005D0C1F /* WizSettingsDataBaseModel.plist in Resources */,
 				873062A9164CEA200049F643 /* app_nuvigationbar_baackground.png in Resources */,
 				873062AA164CEA200049F643 /* app_nuvigationbar_baackground@2x.png in Resources */,
+				873062AF164CFA920049F643 /* wizgroup_logol.png in Resources */,
+				873062B5164D005D0049F643 /* wizgroup_logol@2x(1).png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
