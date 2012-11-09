@@ -26,7 +26,7 @@
 {
     self.tintColor = [UIColor whiteColor];
     UIImage* image = [UIImage imageNamed:@"toolbarBackgroud"];
-    [image drawInRect:CGRectMake(0.0, 0.0, self.frame.size.width, self.frame.size.height)];
+    [image drawInRect:CGRectMake(0.0, -1, self.frame.size.width, self.frame.size.height+1)];
 }
 
 

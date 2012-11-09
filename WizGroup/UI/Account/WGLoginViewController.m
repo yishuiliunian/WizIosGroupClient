@@ -15,6 +15,28 @@
 #import "CommonString.h"
 #import <QuartzCore/QuartzCore.h>
 
+@interface UIView (LoginPlaceHoder)
++ (UIView*) loginTextFieldView:(UIImage*)image frame:(CGRect)rect;
+@end
+
+@implementation UIView (LoginPlaceHoder)
+
++ (UIView*) loginTextFieldView:(UIImage*)image frame:(CGRect)rect
+{
+    UIView* view = [[UIView alloc] initWithFrame:rect];
+    
+    float imageWidth = 30;
+    float imageHeight = imageWidth;
+    
+    UIImageView* imageView = [[UIImageView alloc] initWithFrame:CGRectMake((rect.size.width - imageWidth)/2, (rect.size.height - imageHeight)/2, imageWidth, imageHeight)];
+    imageView.image = image;
+    [view addSubview:imageView];
+    [imageView release];
+    return [view autorelease];
+}
+
+@end
+
 @interface WGLoginViewController () <WizApiLoginDelegate, UIGestureRecognizerDelegate>
 {
     UITextField* usernameTextField;
@@ -61,14 +83,9 @@
         usernameTextField.placeholder = NSLocalizedString(@"Username", nil);
         usernameTextField.textAlignment = UITextAlignmentLeft;
         usernameTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-        
-        
-        UIImageView* userImView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"user"]];
-        userImView.frame = CGRectMake(0.0, 0.0, 30, 30);
         usernameTextField.leftViewMode = UITextFieldViewModeAlways;
-        usernameTextField.leftView = userImView;
-        [userImView release];
-        //
+        usernameTextField.leftView = [UIView loginTextFieldView:[UIImage imageNamed:@"user"] frame:CGRectMake(0, 0, 60, 40)];
+
         
         passwordTextField = [[UITextField alloc] init];
         passwordTextField.secureTextEntry = YES;
@@ -76,11 +93,8 @@
         passwordTextField.placeholder = NSLocalizedString(@"Password", nil);
         passwordTextField.textAlignment = UITextAlignmentLeft;
         passwordTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-        UIImageView* passImView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"password"]];
-        passImView.frame = CGRectMake(20, 0.0, 30, 30);
         passwordTextField.leftViewMode = UITextFieldViewModeAlways;
-        passwordTextField.leftView = passImView;
-        [passImView release];
+        passwordTextField.leftView = [UIView loginTextFieldView:[UIImage imageNamed:@"password"] frame:CGRectMake(0, 0, 60, 40)];
         //
         inputBackgroudView = [[UIView alloc] init];
         CALayer* layer = inputBackgroudView.layer;

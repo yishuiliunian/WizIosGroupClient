@@ -95,6 +95,7 @@
         readWebView = [[UIWebView alloc] init];
         readWebView.scrollView.delegate = self;
         readWebView.delegate = self;
+        readWebView.scalesPageToFit = YES;
         //
         titleLabel = [[UILabel alloc] init];
         titleLabel.textAlignment = UITextAlignmentCenter;
@@ -284,6 +285,10 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+- (void) scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
+{
+    NSLog(@"%f %f cotent %f %f",velocity.x, velocity.y,targetContentOffset->x, targetContentOffset->y);
 }
 
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView
