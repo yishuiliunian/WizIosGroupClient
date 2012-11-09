@@ -286,10 +286,6 @@
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
-- (void) scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
-{
-    NSLog(@"%f %f cotent %f %f",velocity.x, velocity.y,targetContentOffset->x, targetContentOffset->y);
-}
 
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView
 {

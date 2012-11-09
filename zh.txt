@@ -42,7 +42,7 @@
 "Signing in, please wait...!"="登录中，请稍候...";
 "Switch accounts"="切换账号";
 "Your advice"="您的建议：";
-"Release to refresh..."="下拉以刷新";
+"Release to refresh..."="放开以刷新";
 "Syncing attachment list"="同步附件列表";
 "Tap to view"="单击查看";
 "Syncing folders"="同步文件夹";
