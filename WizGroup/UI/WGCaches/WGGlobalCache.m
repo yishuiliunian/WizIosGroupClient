@@ -19,7 +19,7 @@
 
 @interface WizGroupDocument : NSObject
 {
-    
+
 }
 @property (nonatomic, retain) NSString* documentKbguid;
 @property (nonatomic, retain) NSString* kbguid;
@@ -33,7 +33,7 @@
 @synthesize accountUserId;
 - (void) dealloc
 {
-    
+
     [documentKbguid release];
     [kbguid release];
     [accountUserId release];
@@ -48,12 +48,15 @@
     NSMutableDictionary* observersDictionary;
 }
 @property (nonatomic, retain) NSMutableArray* needGenAbsDocArray;
+@property (atomic, retain) NSMutableArray* imageCacheQueue;
 @end
 
 @implementation WGGlobalCache
 @synthesize needGenAbsDocArray;
+@synthesize imageCacheQueue;
 - (void) dealloc
 {
+    [imageCacheQueue release];
     [docAbastractLock release];
     [needGenAbsDocArray release];
     [observersDictionary release];
@@ -64,6 +67,7 @@
 {
     self = [super init];
     if (self) {
+        imageCacheQueue = [[NSMutableArray alloc] init];
         observersDictionary = [[NSMutableDictionary alloc] init];
         needGenAbsDocArray = [[NSMutableArray alloc] init];
         docAbastractLock = [[NSConditionLock alloc] init];
@@ -71,6 +75,8 @@
     }
     return self;
 }
+
+
 
 + (id) shareInstance
 {
