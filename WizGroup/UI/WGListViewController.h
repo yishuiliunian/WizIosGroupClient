@@ -14,7 +14,7 @@ enum WGListType {
     WGListTypeUnread = 2,
     WGListTypeNoTags = 3
     };
-
+@class WizGroup;
 @interface WGListViewController : UITableViewController
 @property (nonatomic, retain) NSString* kbGuid;
 @property (nonatomic, retain) NSString* accountUserId;
