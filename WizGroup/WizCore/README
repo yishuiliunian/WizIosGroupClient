@@ -1,0 +1,10 @@
+引入该工程需要添加的库
+libxml2
+libsqlite3
+libz
+
+在 Header search path 中加入 /usr/include/libxml2
+
+在prefix header中加入
+    #import "WizGlobals.h"
+    #import "CommonString.h"

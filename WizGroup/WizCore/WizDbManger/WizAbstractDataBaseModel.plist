@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Wiz_SEARCH</key>
+	<dict>
+		<key>SEARCH_NOTE_COUNT</key>
+		<string>int</string>
+		<key>SEARCH_EDIT_DATE</key>
+		<string>char(19)</string>
+		<key>SEARCH_KEYWORDS</key>
+		<string>varchar(400)</string>
+		<key>SEARCH_ISLOCAL</key>
+		<string>int</string>
+		<key>PRIMARAY_KEY</key>
+		<string>SEARCH_KEYWORDS</string>
+	</dict>
+	<key>WIZ_ABSTRACT</key>
+	<dict>
+		<key>ABSTRACT_GUID</key>
+		<string>char(36) </string>
+		<key>ABSTRACT_TYPE</key>
+		<string>varchar(50)</string>
+		<key>ABSTRACT_TEXT</key>
+		<string>varchar(3000)</string>
+		<key>ABSTRACT_IMAGE</key>
+		<string>blob</string>
+		<key>DT_MODIFIED</key>
+		<string>char(19)</string>
+		<key>GROUP_KBGUID</key>
+		<string>char(36)</string>
+		<key>PRIMARAY_KEY</key>
+		<string>ABSTRACT_GUID</string>
+	</dict>
+</dict>
+</plist>

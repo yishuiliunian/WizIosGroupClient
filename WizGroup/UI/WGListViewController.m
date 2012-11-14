@@ -280,7 +280,7 @@
     [self.tableView addSubview:self.pullToRefreshView];
     
     //
-    isRefreshing = [[WizSyncCenter defaultCenter] isSyncingGrop:self.kbGuid accountUserId:self.accountUserId];
+    isRefreshing = [[WizSyncCenter defaultCenter]  isRefreshingGroup:self.kbGuid accountUserId:self.accountUserId];
     if (isRefreshing) {
         [self.pullToRefreshView startLoadingAnimation:self.tableView];
     }

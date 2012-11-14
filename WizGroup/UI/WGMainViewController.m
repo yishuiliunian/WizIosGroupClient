@@ -365,7 +365,7 @@
     cell.kbguid = group.kbguid;
     cell.accountUserId = group.accountUserId;
     [cell setBadgeCount];
-    if ([[WizSyncCenter defaultCenter] isSyncingGrop:group.kbguid accountUserId:group.accountUserId]) {
+    if ([[WizSyncCenter defaultCenter]  isRefreshingGroup:group.kbguid accountUserId:group.accountUserId ]) {
         [cell.activityIndicator startAnimating];
     }
     else
@@ -454,7 +454,7 @@
 - (void) refreshGroupData
 {
     NSString* userId = [[WizAccountManager defaultManager] activeAccountUserId];
-    [[WizSyncCenter defaultCenter] refreshGroupsListFor:userId];
+    [[WizSyncCenter defaultCenter] refreshAccount:userId];
     [self.refreshImageView startAnimating];
 }
 - (void) viewWillAppear:(BOOL)animated
