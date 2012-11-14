@@ -32,7 +32,6 @@
                                     UISearchBarDelegate,UISearchDisplayDelegate>
 {
     NSMutableArray* documentsArray;
-    WGToolBar*      wgToolBar;
     BOOL    isRefreshing;
 }
 @property (nonatomic, retain) NSIndexPath* lastIndexPath;
@@ -84,10 +83,6 @@
     if (self) {
         [self addObserver:self forKeyPath:@"listKey" options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew  context:nil];
         documentsArray = [[NSMutableArray alloc] init];
-        wgToolBar = [[WGToolBar alloc] init];
-        UIBarButtonItem* backToHomeItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"homeBtnImage"] hightedImage:nil target:self selector:@selector(backToHome)];
-        [wgToolBar setItems:@[backToHomeItem]];
-        
         isRefreshing = NO;
         //
         searchHistoryArray = [[NSMutableArray alloc] init];
@@ -207,7 +202,7 @@
     UIBarButtonItem* backToHomeItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"doc_list_home"] hightedImage:nil target:self selector:@selector(backToHome)];
    
     
-    [nav setWgToolItems:@[backToHomeItem,flexItem]];
+    [nav setWgToolItems:@[flexItem]];
 }
 - (void) viewWillAppear:(BOOL)animated
 {
@@ -289,6 +284,8 @@
         [self.pullToRefreshView egoRefreshScrollViewDataSourceDidFinishedLoading:self.tableView];
     }
     
+    UIBarButtonItem* backToHomeItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"doc_list_home"] hightedImage:nil target:self selector:@selector(backToHome)];
+    self.navigationItem.rightBarButtonItem = backToHomeItem;
 }
 
 - (void)viewDidUnload
@@ -464,7 +461,7 @@
 }
 - (void) refreshGroupData
 {
-    [[WizSyncCenter defaultCenter] refreshGroupData:self.kbGuid accountUserId:self.accountUserId];
+    [[WizSyncCenter defaultCenter] refreshGroup:self.kbGuid accountUserId:self.accountUserId];
 }
 - (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
