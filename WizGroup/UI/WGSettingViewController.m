@@ -13,6 +13,7 @@
 #import "WGLoginViewController.h"
 #import "SVModalWebViewController.h"
 #import "WizFileManager.h"
+#import "WGFeedBackViewController.h"
 
 //
 #import <MessageUI/MessageUI.h>
@@ -227,6 +228,7 @@ typedef enum _WGSettingSectionIndex {
         [self presentModalViewController: mailPocker animated:YES];
         [mailPocker release];
     }
+
 }
 
 - (void) showAppRunLog

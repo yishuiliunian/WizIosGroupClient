@@ -22,6 +22,8 @@
 #import "WizSyncCenter.h"
 
 #import "WizNotificationCenter.h"
+#import "WGFeedBackViewController.h"
+
 
 @interface WGListViewController () <WGReadListDelegate,EGORefreshTableHeaderDelegate>
 {
@@ -155,6 +157,8 @@
     [self.tableView reloadData];
 }
 
+
+
 - (void) backToHome
 {
     CATransition *tran = [CATransition animation];
@@ -178,8 +182,20 @@
 }
 - (void) feedbackCenter
 {
-    
+    WGFeedBackViewController* feedbackVC = [[WGFeedBackViewController alloc]init];
+    feedbackVC.delegate = self;
+    feedbackVC.modalPresentationStyle = UIModalPresentationFullScreen;
+	feedbackVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    [self.navigationController presentModalViewController:feedbackVC animated:YES];
+    [feedbackVC release];
 }
+
+- (void)didfinishFeedBack:(WGFeedBackViewController *)controller
+{
+    [self dismissModalViewControllerAnimated:YES];
+}
+
+
 - (void) reloadToolBarItems
 {
     WGNavigationViewController* nav = (WGNavigationViewController*)self.navigationController;
@@ -189,14 +205,15 @@
     
     UIBarButtonItem* backToHomeItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"doc_list_home"] hightedImage:nil target:self selector:@selector(backToHome)];
    
-    
-    [nav setWgToolItems:@[backToHomeItem,flexItem]];
+    UIBarButtonItem* feedBackItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"listFeedbackIcon"] hightedImage:nil target:self selector:@selector(feedbackCenter)];
+    [nav setWgToolItems:@[backToHomeItem,flexItem,feedBackItem]];
 }
+
 - (void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     [self.navigationController setToolbarHidden:NO];
-[self.navigationController setNavigationBarHidden:NO];
+    [self.navigationController setNavigationBarHidden:NO];
     [self reloadAllData];
     [self reloadToolBarItems];
     self.revealSideViewController.panInteractionsWhenClosed = PPRevealSideInteractionContentView | PPRevealSideInteractionNavigationBar;
