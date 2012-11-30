@@ -25,7 +25,6 @@
 
 #import "WGGlobalCache.h"
 
-#import "UINavigationBar+WizCustom.h"
 
 #import "WizDbManager.h"
 //
@@ -184,7 +183,7 @@
     [loginLabel release];
     
     UIImageView* logoWordImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 76, 20)];
-    logoWordImageView.image = [UIImage imageNamed:@"group_list_logol_words"];
+    logoWordImageView.image = [UIImage imageNamed:@"group_list_words"];
     [logoButton addSubview:logoWordImageView];
     [logoWordImageView release];
     
@@ -365,7 +364,7 @@
     cell.kbguid = group.kbguid;
     cell.accountUserId = group.accountUserId;
     [cell setBadgeCount];
-    if ([[WizSyncCenter defaultCenter] isSyncingGrop:group.kbguid accountUserId:group.accountUserId]) {
+    if ([[WizSyncCenter defaultCenter]  isRefreshingGroup:group.kbguid accountUserId:group.accountUserId ]) {
         [cell.activityIndicator startAnimating];
     }
     else
@@ -454,7 +453,7 @@
 - (void) refreshGroupData
 {
     NSString* userId = [[WizAccountManager defaultManager] activeAccountUserId];
-    [[WizSyncCenter defaultCenter] refreshGroupsListFor:userId];
+    [[WizSyncCenter defaultCenter] refreshAccount:userId];
     [self.refreshImageView startAnimating];
 }
 - (void) viewWillAppear:(BOOL)animated

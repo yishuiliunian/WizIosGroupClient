@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WizSetting</key>
+	<dict>
+		<key>SETTING_USERID</key>
+		<string>varchar(200)</string>
+		<key>SETTING_KBGUID</key>
+		<string>char(36)</string>
+		<key>SETTING_KEY</key>
+		<string>varchar(200)</string>
+		<key>SETTING_VALUE</key>
+		<string>varchar(200)</string>
+		<key>SETTING_DATE_MODIFIED</key>
+		<string>char(19)</string>
+		<key>PRIMARAY_KEY</key>
+		<string>SETTING_USERID,SETTING_KBGUID,SETTING_KEY</string>
+	</dict>
+	<key>WizGroup</key>
+	<dict>
+		<key>KB_ACCOUNT_USERID</key>
+		<string>varchar(200)</string>
+		<key>KB_DATE_CREATED</key>
+		<string>char(19)</string>
+		<key>KB_DATE_MODIFIED</key>
+		<string>char(19)</string>
+		<key>KB_DATE_ROLE_CREATED</key>
+		<string>char(19)</string>
+		<key>KB_GUID</key>
+		<string>char(100)</string>
+		<key>KB_ID</key>
+		<string>varchar(100)</string>
+		<key>KB_NAME</key>
+		<string>varchar(200)</string>
+		<key>KB_NOTE</key>
+		<string>varchar(200)</string>
+		<key>KB_SEO</key>
+		<string>varchar(200)</string>
+		<key>KB_TYPE</key>
+		<string>varchar(200)</string>
+		<key>KB_ORDER_INDEX</key>
+		<string>int</string>
+		<key>KB_OWNER_NAME</key>
+		<string>varchar(200)</string>
+		<key>KB_ROLE_NOTE</key>
+		<string>varchar(200)</string>
+		<key>KB_SERVER_URL</key>
+		<string>varchar(400)</string>
+		<key>KB_USER_GROUP</key>
+		<string>int</string>
+		<key>PRIMARAY_KEY</key>
+		<string>KB_GUID,KB_ACCOUNT_USERID</string>
+	</dict>
+	<key>WizAccount</key>
+	<dict>
+		<key>ACCOUNT_USERID</key>
+		<string>varchar(200)</string>
+		<key>ACCOUNT_PASSWORD</key>
+		<string>varchar(200)</string>
+		<key>ACCOUNT_KBGUID</key>
+		<string>varchar(200)</string>
+		<key>PRIMARAY_KEY</key>
+		<string>ACCOUNT_USERID</string>
+	</dict>
+</dict>
+</plist>

@@ -131,7 +131,7 @@
 }
 - (void) downloadDocument:(WizDocument*)doc
 {
-    [[WizSyncCenter defaultCenter] downloadDocument:doc kbguid:self.kbguid accountUserId:self.accountUserId];
+    [[WizSyncCenter defaultCenter] downloadDocument:doc kbguid:self.kbguid accountUserId:self.accountUserId priority:WizDownloadPriorityHigh];
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
 }
 
@@ -197,7 +197,7 @@
     WizSyncCenter* center = [WizSyncCenter defaultCenter];
     WizDocument* doc = [self.listDelegate currentDocument];
     
-    [center downloadDocument:doc kbguid:self.kbguid accountUserId:self.accountUserId];
+    [center downloadDocument:doc kbguid:self.kbguid accountUserId:self.accountUserId priority:WizDownloadPriorityHigh];
 }
 - (void) shareCurrentDoc
 {
@@ -243,7 +243,7 @@
     UIBarButtonItem* attachmentItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"read_attachment"] hightedImage:nil target:self selector:@selector(checkAttachment)];
     UIBarButtonItem* infoItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"read_info"] hightedImage:nil target:self selector:@selector(checkInfo)];
     
-    [nav setWgToolItems:@[backToList,flexItem,infoItem,attachmentItem,preItem,nextItem]];
+    [nav setWgToolItems:@[backToList,preItem, nextItem,flexItem,infoItem,attachmentItem]];
 }
 
 - (void) backToList
