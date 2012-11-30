@@ -309,7 +309,7 @@
 //        CGRect rectToDraw = CGRectInset(rect, kMarginToDrawInside, kMarginToDrawInside);
         CGRect rectToDraw = CGRectMake(0.0, 0.0, 20, 20);
         
-        UIImage* orangeImage = [UIImage imageNamed:@"orangeBadgeBackground"];
+        UIImage* orangeImage = [UIImage imageNamed:@"group_list_organge"];
         [orangeImage drawInRect:rectToDraw];
         
 //        UIBezierPath *borderPath = [UIBezierPath bezierPathWithRoundedRect:rectToDraw byRoundingCorners:(UIRectCorner)UIRectCornerAllCorners cornerRadii:CGSizeMake(kBadgeCornerRadius, kBadgeCornerRadius)];

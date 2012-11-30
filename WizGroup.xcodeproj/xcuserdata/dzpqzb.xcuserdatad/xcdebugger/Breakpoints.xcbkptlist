@@ -55,5 +55,31 @@
          landmarkName = "-downloadWizObject:"
          landmarkType = "5">
       </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "WizIosSDK/WizCoreFunc/WizCore/WizDbManger/WizTempDataBase.m"
+         timestampString = "374665127.308892"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "175"
+         endingLineNumber = "175"
+         landmarkName = "-updateWizSearch:notesNumber:isSerchLocal:kbguid:accountUserId:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "WizIosSDK/WizCoreFunc/WizCore/WizApi/WizApiSyncGroupMeta.m"
+         timestampString = "374999065.703982"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "319"
+         endingLineNumber = "319"
+         landmarkName = "-xmlrpcDoneSucced:forMethod:"
+         landmarkType = "5">
+      </FileBreakpoint>
    </FileBreakpoints>
 </Bucket>

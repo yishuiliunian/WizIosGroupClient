@@ -25,7 +25,6 @@
 
 #import "WGGlobalCache.h"
 
-#import "UINavigationBar+WizCustom.h"
 
 #import "WizDbManager.h"
 //
@@ -184,7 +183,7 @@
     [loginLabel release];
     
     UIImageView* logoWordImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 76, 20)];
-    logoWordImageView.image = [UIImage imageNamed:@"group_list_logol_words"];
+    logoWordImageView.image = [UIImage imageNamed:@"group_list_words"];
     [logoButton addSubview:logoWordImageView];
     [logoWordImageView release];
     

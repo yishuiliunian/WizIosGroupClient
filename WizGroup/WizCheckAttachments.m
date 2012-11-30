@@ -232,7 +232,7 @@
     {
         willCheckInWiz = inWiz;
         [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        [[WizSyncCenter defaultCenter] downloadAttachment:attachment kbguid:self.kbguid accountUserId:self.accountUserId];
+        [[WizSyncCenter defaultCenter] downloadAttachment:attachment kbguid:self.kbguid accountUserId:self.accountUserId priority:WizDownloadPriorityHigh];
         [[WizNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadDone:) name:WizNMDidDownloadDocument object:nil];
     }
     

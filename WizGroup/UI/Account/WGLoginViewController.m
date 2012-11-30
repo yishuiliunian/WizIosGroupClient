@@ -84,7 +84,7 @@
         usernameTextField.textAlignment = UITextAlignmentLeft;
         usernameTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
         usernameTextField.leftViewMode = UITextFieldViewModeAlways;
-        usernameTextField.leftView = [UIView loginTextFieldView:[UIImage imageNamed:@"user"] frame:CGRectMake(0, 0, 60, 40)];
+        usernameTextField.leftView = [UIView loginTextFieldView:[UIImage imageNamed:@"login_usernume"] frame:CGRectMake(0, 0, 60, 40)];
 
         
         passwordTextField = [[UITextField alloc] init];
@@ -94,7 +94,7 @@
         passwordTextField.textAlignment = UITextAlignmentLeft;
         passwordTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
         passwordTextField.leftViewMode = UITextFieldViewModeAlways;
-        passwordTextField.leftView = [UIView loginTextFieldView:[UIImage imageNamed:@"password"] frame:CGRectMake(0, 0, 60, 40)];
+        passwordTextField.leftView = [UIView loginTextFieldView:[UIImage imageNamed:@"login_password"] frame:CGRectMake(0, 0, 60, 40)];
         //
         inputBackgroudView = [[UIView alloc] init];
         CALayer* layer = inputBackgroudView.layer;
@@ -203,11 +203,11 @@
     [backgroudView addSubview:inputBackgroudView];
     
     clientLoginButton.frame = CGRectMake(startX, 140, width, 40);
-    [clientLoginButton setBackgroundImage:[UIImage imageNamed:@"loginButtonBackgroud"] forState:UIControlStateNormal];
+    [clientLoginButton setBackgroundImage:[UIImage imageNamed:@"login_button_ackgroud"] forState:UIControlStateNormal];
     clientLoginButton.titleLabel.textColor = [UIColor whiteColor];
     [backgroudView addSubview:clientLoginButton];
     //
-    UIBarButtonItem* backItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"loginBackArrow"] hightedImage:nil target:self selector:@selector(backToHome)];
+    UIBarButtonItem* backItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"login_back"] hightedImage:nil target:self selector:@selector(backToHome)];
     self.navigationItem.leftBarButtonItem = backItem;
 	// Do any additional setup after loading the view.
 }

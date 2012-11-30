@@ -12,7 +12,8 @@ enum WGListType {
     WGListTypeRecent = 0,
     WGListTypeTag = 1,
     WGListTypeUnread = 2,
-    WGListTypeNoTags = 3
+    WGListTypeNoTags = 3,
+    WGListTypeSearch    =4
     };
 @class WizGroup;
 @interface WGListViewController : UITableViewController

@@ -25,11 +25,12 @@
 #import "WizNotificationCenter.h"
 
 //
-#import "SearchHistoryViewController.h"
+#import "WizApiSearch.h"
+#import "MBProgressHUD.h"
 
 @interface WGListViewController () <WGReadListDelegate,
                                     EGORefreshTableHeaderDelegate,
-                                    UISearchBarDelegate,UISearchDisplayDelegate>
+                                    UISearchBarDelegate,UISearchDisplayDelegate,WizSearchDelegate>
 {
     NSMutableArray* documentsArray;
     BOOL    isRefreshing;
@@ -39,11 +40,14 @@
 @property (nonatomic, retain) UISearchBar* searchBar;
 @property (nonatomic ,retain) UISearchDisplayController* searchDisplayCon;
 @property (nonatomic, retain) NSMutableArray* searchHistoryArray;
-
+@property (nonatomic, retain) NSMutableArray* searchedDocumentsArray;
+@property (atomic, retain) NSString* searchKeyWords;
 @end
 
 @implementation WGListViewController
 @synthesize kbGuid;
+@synthesize searchKeyWords;
+@synthesize searchedDocumentsArray;
 @synthesize accountUserId;
 @synthesize listType;
 @synthesize listKey;
@@ -55,6 +59,8 @@
 @synthesize searchHistoryArray;
 - (void) dealloc
 {
+    [searchKeyWords release];
+    [searchedDocumentsArray release];
     [searchHistoryArray release];
     [searchDisplayCon release];
     [searchBar release];
@@ -143,7 +149,10 @@
     [documentsArray addObjectsFromArray:[db documentsByNotag]];
     self.title = self.kbGroup.kbName;
 }
-
+- (void) loadSearchDocuments
+{
+    [documentsArray addObjectsFromArray:self.searchedDocumentsArray];
+}
 - (void) reloadAllData
 {
     [documentsArray removeAllObjects];
@@ -159,6 +168,9 @@
             break;
         case WGListTypeNoTags:
             [self loadNotagDocuments];
+            break;
+        case WGListTypeSearch:
+            [self loadSearchDocuments];
             break;
         default:
             [self loadRecentsDocument];
@@ -192,6 +204,10 @@
 {
     
 }
+- (void) beginSearch
+{
+    [self.searchBar becomeFirstResponder];
+}
 - (void) reloadToolBarItems
 {
     WGNavigationViewController* nav = (WGNavigationViewController*)self.navigationController;
@@ -199,10 +215,10 @@
     
     UIBarButtonItem* flexItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease];
     
-    UIBarButtonItem* backToHomeItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"doc_list_home"] hightedImage:nil target:self selector:@selector(backToHome)];
+    UIBarButtonItem* searchItem= [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"doc_list_finder"] hightedImage:nil target:self selector:@selector(beginSearch)];
    
     
-    [nav setWgToolItems:@[flexItem]];
+    [nav setWgToolItems:@[searchItem,flexItem]];
 }
 - (void) viewWillAppear:(BOOL)animated
 {
@@ -244,7 +260,7 @@
     [navBar setTitleTextAttributes:attributes];
     [self.navigationController setValue:navBar forKeyPath:@"navigationBar"];
     
-    UIBarButtonItem* showLeftItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"listIcon"] hightedImage:[UIImage imageNamed:@"doc_list_tocategory"] target:self selector:@selector(showLeftController)];
+    UIBarButtonItem* showLeftItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"doc_list_tocategory"] hightedImage:nil target:self selector:@selector(showLeftController)];
     
     self.navigationItem.leftBarButtonItem = showLeftItem;
 
@@ -256,10 +272,12 @@
     [super viewDidLoad];
     [self customizeNavBar];
     
+    
     self.searchBar = [[[UISearchBar alloc] init] autorelease];
     self.searchBar.frame = CGRectMake(0.0, 00, self.view.frame.size.width, 44);
     self.searchBar.tintColor = [UIColor lightGrayColor];
     self.searchBar.delegate = self;
+    self.searchBar.scopeButtonTitles = @[NSLocalizedString(@"Title", nil),NSLocalizedString(@"All", nil)];
    
 
     self.searchDisplayCon = [[[UISearchDisplayController alloc] initWithSearchBar:searchBar contentsController:self] autorelease];
@@ -341,10 +359,11 @@
     static NSString* CellIdentifier = @"Cell";
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier]autorelease];
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier]autorelease];
     }
     WizSearch* search = [self.searchHistoryArray objectAtIndex:indexPath.row];
     cell.textLabel.text = search.strKeyWords;
+    cell.detailTextLabel.text = [search.dateLastSearched stringLocal];
     return cell;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -358,6 +377,9 @@
     
     if (nil == cell) {
         cell = [[[WGDetailListCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+    }
+    if ([documentsArray count] == 0) {
+        return cell;
     }
     WizDocument* doc = [documentsArray objectAtIndex:indexPath.row];
     cell.documentGuid = doc.strGuid;
@@ -401,7 +423,8 @@
 {
     if ([tableView isEqual:self.searchDisplayCon.searchResultsTableView]) {
         
-        
+        WizSearch* search = [self.searchHistoryArray objectAtIndex:indexPath.row];
+        [self searchOnServer:search.strKeyWords];
         return;
     }
     //
@@ -501,12 +524,50 @@
 - (void) searchBar:(UISearchBar *)searchBar_ textDidChange:(NSString *)searchText
 {
     id<WizTemporaryDataBaseDelegate> db = [[WizDbManager shareInstance] getGlobalCacheDb];
-    NSArray* array = [db allWizSearchs];
-    WizSearch* search = [[[WizSearch alloc] init] autorelease];
-    search.strKeyWords = @"asdfasd";
-    search.dateLastSearched = [NSDate date];
-//    [self.searchHistoryArray removeAllObjects];
-    [self.searchHistoryArray addObject:search];
+    NSArray* array = [db allWizSearchsByKbguid:self.kbGuid accountUserId:self.accountUserId];
+    [self.searchHistoryArray removeAllObjects];
     [self.searchHistoryArray addObjectsFromArray:array];
 }
+
+- (void) searchOnServer:(NSString*)keyWords
+{
+    [MBProgressHUD showHUDAddedTo:self.searchDisplayCon.searchResultsTableView animated:YES];
+    self.searchKeyWords = keyWords;
+    WizApiSearch* search = [[[WizApiSearch alloc] initWithKbguid:self.kbGuid accountUserId:self.accountUserId apiDelegate:nil] autorelease];
+    search.delegate = self;
+    search.keyWords = keyWords;
+    [WizSyncCenter runWizApi:search inQueue:[NSOperationQueue wizDownloadQueue]];
+ 
+}
+
+- (void) searchBarSearchButtonClicked:(UISearchBar *)searchBar_
+{
+    
+    [self searchOnServer:searchBar_.text];
+}
+- (void) didSearchSucceed:(NSArray *)array
+{
+    [MBProgressHUD hideAllHUDsForView:self.searchDisplayCon.searchResultsTableView animated:YES];
+    
+    NSLog(@"search key words is %@",self.searchKeyWords);
+    
+    id<WizTemporaryDataBaseDelegate> db = [[WizDbManager shareInstance] getGlobalCacheDb];
+    [db updateWizSearch:self.searchKeyWords notesNumber:[array count] isSerchLocal:NO kbguid:self.kbGuid accountUserId:self.accountUserId];
+    //
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.searchedDocumentsArray = [NSMutableArray arrayWithArray:array];
+        self.listKey = @"";
+        self.listType = WGListTypeSearch;
+        [self reloadAllData];
+       [self.searchDisplayCon setActive:NO animated:YES]; 
+    });
+    
+
+}
+- (void) didSearchError:(NSError *)error
+{
+    NSLog(@"search faild");
+}
+
 @end
