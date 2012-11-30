@@ -17,7 +17,9 @@ enum WGListType {
     };
 @class WizGroup;
 
+
 @interface WGListViewController : UITableViewController<WGFeedBackViewControllerDelegate>
+
 @property (nonatomic, retain) NSString* kbGuid;
 @property (nonatomic, retain) NSString* accountUserId;
 @property (nonatomic, assign) enum WGListType listType;

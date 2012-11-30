@@ -12,7 +12,8 @@
 #import "WizDbManager.h"
 #import "WGReadViewController.h"
 #import "WGNavigationBar.h"
-
+#import "WizGroup.h"
+#import "CommonString.h"
 #import "WGDetailListCell.h"
 #import "WGBarButtonItem.h"
 #import "WGToolBar.h"
@@ -26,14 +27,22 @@
 #import "WGCreateNoteViewController.h"
 
 
-@interface WGListViewController () <WGReadListDelegate,EGORefreshTableHeaderDelegate>
+//
+#import "SearchHistoryViewController.h"
+
+@interface WGListViewController () <WGReadListDelegate,
+                                    EGORefreshTableHeaderDelegate,
+                                    UISearchBarDelegate,UISearchDisplayDelegate>
 {
     NSMutableArray* documentsArray;
-    WGToolBar*      wgToolBar;
     BOOL    isRefreshing;
 }
 @property (nonatomic, retain) NSIndexPath* lastIndexPath;
 @property (nonatomic, retain) EGORefreshTableHeaderView* pullToRefreshView;
+@property (nonatomic, retain) UISearchBar* searchBar;
+@property (nonatomic ,retain) UISearchDisplayController* searchDisplayCon;
+@property (nonatomic, retain) NSMutableArray* searchHistoryArray;
+
 @end
 
 @implementation WGListViewController
@@ -44,8 +53,14 @@
 @synthesize lastIndexPath;
 @synthesize kbGroup;
 @synthesize pullToRefreshView;
+@synthesize searchBar;
+@synthesize searchDisplayCon;
+@synthesize searchHistoryArray;
 - (void) dealloc
 {
+    [searchHistoryArray release];
+    [searchDisplayCon release];
+    [searchBar release];
     [self removeObserver:self forKeyPath:@"listKey"];
     [[WizNotificationCenter defaultCenter] removeObserver:self];
     [pullToRefreshView release];
@@ -71,12 +86,9 @@
     if (self) {
         [self addObserver:self forKeyPath:@"listKey" options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew  context:nil];
         documentsArray = [[NSMutableArray alloc] init];
-        wgToolBar = [[WGToolBar alloc] init];
-        UIBarButtonItem* backToHomeItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"homeBtnImage"] hightedImage:nil target:self selector:@selector(backToHome)];
-        [wgToolBar setItems:@[backToHomeItem]];
-        
         isRefreshing = NO;
         //
+        searchHistoryArray = [[NSMutableArray alloc] init];
         [[WizNotificationCenter defaultCenter] addObserver:self selector:@selector(startRefreshingGroup:) name:WizNMSyncGroupStart object:nil
          ];
         [[WizNotificationCenter defaultCenter] addObserver:self selector:@selector(endRefreshGroup:) name:WizNMSyncGroupEnd object:nil];
@@ -212,10 +224,13 @@
     
     UIBarButtonItem* backToHomeItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"doc_list_home"] hightedImage:nil target:self selector:@selector(backToHome)];
     
+
     UIBarButtonItem* editCommentItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"listEditIcon"] hightedImage:nil target:self selector:@selector(editComment)];
     
     UIBarButtonItem* feedBackItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"listFeedbackIcon"] hightedImage:nil target:self selector:@selector(feedbackCenter)];
     [nav setWgToolItems:@[backToHomeItem,flexItem,editCommentItem,feedBackItem]];
+
+    [nav setWgToolItems:@[flexItem]];
 }
 
 - (void) viewWillAppear:(BOOL)animated
@@ -269,14 +284,27 @@
 {
     [super viewDidLoad];
     [self customizeNavBar];
+    
+    self.searchBar = [[[UISearchBar alloc] init] autorelease];
+    self.searchBar.frame = CGRectMake(0.0, 00, self.view.frame.size.width, 44);
+    self.searchBar.tintColor = [UIColor lightGrayColor];
+    self.searchBar.delegate = self;
+   
 
+    self.searchDisplayCon = [[[UISearchDisplayController alloc] initWithSearchBar:searchBar contentsController:self] autorelease];
+
+    self.searchDisplayCon.searchResultsDataSource = self;
+    self.searchDisplayCon.searchResultsDelegate = self;
+
+    
+    self.tableView.tableHeaderView = self.searchBar;
     
     self.pullToRefreshView = [[[EGORefreshTableHeaderView alloc] initWithFrame:CGRectMake(0.0f, 0.0f - self.tableView.bounds.size.height, self.view.frame.size.width, self.tableView.bounds.size.height)] autorelease];
     self.pullToRefreshView.delegate = self;
     [self.tableView addSubview:self.pullToRefreshView];
     
     //
-    isRefreshing = [[WizSyncCenter defaultCenter] isSyncingGrop:self.kbGuid accountUserId:self.accountUserId];
+    isRefreshing = [[WizSyncCenter defaultCenter]  isRefreshingGroup:self.kbGuid accountUserId:self.accountUserId];
     if (isRefreshing) {
         [self.pullToRefreshView startLoadingAnimation:self.tableView];
     }
@@ -285,6 +313,8 @@
         [self.pullToRefreshView egoRefreshScrollViewDataSourceDidFinishedLoading:self.tableView];
     }
     
+    UIBarButtonItem* backToHomeItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"doc_list_home"] hightedImage:nil target:self selector:@selector(backToHome)];
+    self.navigationItem.rightBarButtonItem = backToHomeItem;
 }
 
 - (void)viewDidUnload
@@ -302,26 +332,54 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-
-    return 1;
+    if ([tableView isEqual:self.tableView]) {
+        return 1;
+    }
+    else if ([tableView isEqual:self.searchDisplayCon.searchResultsTableView])
+    {
+        return 1;
+    }
+    return 0;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-
-    NSInteger count = [documentsArray count];
-    if (count) {
-        tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    if ([tableView isEqual:self.tableView]) {
+        NSInteger count = [documentsArray count];
+        if (count) {
+            tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+        }
+        else
+        {
+            tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        }
+        return count;
     }
-    else
+    else if ([tableView isEqual:self.searchDisplayCon.searchResultsTableView])
     {
-        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        return [self.searchHistoryArray count];
     }
-    return count;
+    return 0;
+
 }
 
+- (UITableViewCell*) searchTableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString* CellIdentifier = @"Cell";
+    UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil) {
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier]autorelease];
+    }
+    WizSearch* search = [self.searchHistoryArray objectAtIndex:indexPath.row];
+    cell.textLabel.text = search.strKeyWords;
+    return cell;
+}
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if ([tableView isEqual:self.searchDisplayCon.searchResultsTableView]) {
+        return [self searchTableView:tableView cellForRowAtIndexPath:indexPath];
+    }
+    //
     static NSString *CellIdentifier = @"ListCell";
     WGDetailListCell *cell = (WGDetailListCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
@@ -337,7 +395,14 @@
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 110;
+    if ([tableView isEqual:self.tableView]) {
+        return 110;
+    }
+    else if ([tableView isEqual:self.searchDisplayCon.searchResultsTableView])
+    {
+        return 44;
+    }
+    return 44;
 }
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -361,6 +426,12 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if ([tableView isEqual:self.searchDisplayCon.searchResultsTableView]) {
+        
+        
+        return;
+    }
+    //
     self.lastIndexPath = indexPath;
     WGReadViewController* readController = [[WGReadViewController alloc] init];
     readController.kbguid = self.kbGuid;
@@ -417,7 +488,7 @@
 }
 - (void) refreshGroupData
 {
-    [[WizSyncCenter defaultCenter] refreshGroupData:self.kbGuid accountUserId:self.accountUserId];
+    [[WizSyncCenter defaultCenter] refreshGroup:self.kbGuid accountUserId:self.accountUserId];
 }
 - (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -449,5 +520,20 @@
 {
     id<WizSettingsDbDelegate> db = [[WizDbManager shareInstance] getGlobalSettingDb];
     return [db lastUpdateTimeForGroup:self.kbGuid accountUserId:self.accountUserId];
+}
+
+
+//search
+
+- (void) searchBar:(UISearchBar *)searchBar_ textDidChange:(NSString *)searchText
+{
+    id<WizTemporaryDataBaseDelegate> db = [[WizDbManager shareInstance] getGlobalCacheDb];
+    NSArray* array = [db allWizSearchs];
+    WizSearch* search = [[[WizSearch alloc] init] autorelease];
+    search.strKeyWords = @"asdfasd";
+    search.dateLastSearched = [NSDate date];
+//    [self.searchHistoryArray removeAllObjects];
+    [self.searchHistoryArray addObject:search];
+    [self.searchHistoryArray addObjectsFromArray:array];
 }
 @end

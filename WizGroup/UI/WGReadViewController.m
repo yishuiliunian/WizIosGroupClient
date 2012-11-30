@@ -131,7 +131,7 @@
 }
 - (void) downloadDocument:(WizDocument*)doc
 {
-    [[WizSyncCenter defaultCenter] downloadDocument:doc kbguid:self.kbguid accountUserId:self.accountUserId];
+    [[WizSyncCenter defaultCenter] downloadDocument:doc kbguid:self.kbguid accountUserId:self.accountUserId priority:WizDownloadPriorityHigh];
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
 }
 
