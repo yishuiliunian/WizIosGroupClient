@@ -10,7 +10,9 @@
 #import "WGNavigationBarNew.h"
 #import "WGBarButtonItem.h"
 #import "WGChooseFolderViewController.h"
-
+#import "WizFileManager.h"
+#import "WizSyncCenter.h"
+#import "WizDbManager.h"
 @interface WGCreateNoteViewController ()
 
 @end
@@ -23,7 +25,34 @@
 @synthesize contentView;
 @synthesize lineView;
 @synthesize keyboardBack_btn;
+- (NSString*) titleHtmlString:(NSString*)_titleText
+{
+    return [NSString stringWithFormat:@"<title>%@</title>",_titleText];
+}
 
+- (NSString*) htmlString:(NSString*)bodyText title:(NSString*)titleText
+{
+   return  [NSString stringWithFormat:@"<html>%@<body>%@</body></html>",[self titleHtmlString:titleText],[bodyText toHtml]];
+}
+- (void) saveTheDocument
+{
+    NSString* title = self.titilView.text;
+    NSString* bodyText = self.contentView.text;
+    WizDocument* doc = [[[WizDocument alloc] init] autorelease];
+    doc.strGuid = [WizGlobals genGUID];
+    doc.strTitle  = title;
+    doc.nLocalChanged = WizEditDocumentTypeAllChanged;
+    doc.bServerChanged = NO;
+    NSDictionary* docDic = [doc getModelDictionary];
+    bodyText = [self htmlString:bodyText title:title];
+    NSString* indexFilePath = [[WizFileManager shareManager]getDocumentFilePath:DocumentFileIndexName documentGUID:doc.strGuid accountUserId:self.accountUserId];
+    NSString* moblieFilePath = [[WizFileManager shareManager] getDocumentFilePath:DocumentFileMobileName documentGUID:doc.strGuid accountUserId:self.accountUserId];
+    [bodyText writeToFile:indexFilePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    [bodyText writeToFile:moblieFilePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    id<WizMetaDataBaseDelegate> db = [[WizDbManager shareInstance] getMetaDataBaseForAccount:self.accountUserId kbGuid:self.kbGuid];
+    [db updateDocument:docDic];
+    [[WizSyncCenter defaultCenter] uploadDocument:doc kbguid:self.kbGuid accountUserId:self.accountUserId];
+}
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -35,6 +64,7 @@
 
 - (void) dealloc
 {
+    [self saveTheDocument];
     [backgroundView release];
     [titilView release];
     [contentView release];

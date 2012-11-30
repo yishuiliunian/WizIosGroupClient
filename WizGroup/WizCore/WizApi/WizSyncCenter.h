@@ -40,4 +40,6 @@ typedef NS_ENUM(NSInteger,WizDownloadPriority)
 - (BOOL) isRefreshingGroup:(NSString*)kbguid accountUserId:(NSString*)accountUserId;
 //
 + (void) runWizApi:(WizApi*)api  inQueue:(NSOperationQueue*)queue;
+//
+- (void) uploadDocument:(WizDocument*)doc kbguid:(NSString*)kbguid accountUserId:(NSString*)accountUserId;
 @end

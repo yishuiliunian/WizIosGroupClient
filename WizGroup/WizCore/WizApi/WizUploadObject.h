@@ -16,5 +16,4 @@
 @interface WizUploadObject : WizApi
 @property (nonatomic, assign) id<WizUploadObjectDelegate> delegate;
 @property (nonatomic, retain) WizObject* uploadObject;
-
 @end

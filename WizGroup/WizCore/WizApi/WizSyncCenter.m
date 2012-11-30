@@ -14,6 +14,7 @@
 #import "WizGlobalData.h"
 #import "WizApiSyncGroupMeta.h"
 #import "WizDownloadObject.h"
+#import "WizUploadObject.h"
 #import "WizGroup.h"
 #import "WizGlobals.h"
 
@@ -251,13 +252,25 @@ NSString* (^WizSyncStatueObjecgKey)(NSString*,NSString*,NSString*) = ^(NSString*
                                        apiDelegate:self];
     downloadTool.downloadObject = object;
     downloadTool.delegate = self;
-    WizApiOpertaion* apiOper = [WizApiOpertaion wizApiOperation:downloadTool];
-    apiOper.queuePriority = priority;
-    apiOper.queuePriority = NSOperationQueuePriorityHigh;
     [WizSyncCenter runWizApi:downloadTool inQueue:[NSOperationQueue wizDownloadQueue]];
     [downloadTool release];
 }
 
+- (void) uploadWizObject:(WizObject*)object kbguid:(NSString*)kbguid accountUserId:(NSString*)accountUserId
+{
+    if ([self getSyncStatueForKey:WizSyncStatueObjecgKey(object.strGuid,kbguid,accountUserId)] != WizApiStatueNormal ) {
+        return;
+    }
+    WizUploadObject* uploadTool = [[WizUploadObject alloc] initWithKbguid:kbguid accountUserId:accountUserId apiDelegate:self];
+    uploadTool.uploadObject = object;
+    [WizSyncCenter runWizApi:uploadTool inQueue:[NSOperationQueue wizUploadQueue]];
+    [uploadTool release];
+}
+
+- (void) uploadDocument:(WizDocument*)doc kbguid:(NSString*)kbguid accountUserId:(NSString*)accountUserId
+{
+    [self uploadWizObject:doc kbguid:kbguid accountUserId:accountUserId];
+}
 - (void) downloadDocument:(WizDocument *)doc
                    kbguid:(NSString *)kbguid
             accountUserId:(NSString *)accountUserId

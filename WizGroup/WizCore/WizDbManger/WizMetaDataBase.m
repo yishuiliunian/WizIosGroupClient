@@ -13,7 +13,7 @@
 #import "WizTag.h"
 #import "WizFileManager.h"
 #import "WizDbManager.h"
-//#import "WGGlobalCache.h"
+#import "WGGlobalCache.h"
 
 #import "WizGlobals.h"
 #import <QuartzCore/QuartzCore.h>
@@ -130,9 +130,8 @@ static NSString* const KeyOfDocumentUnReadCount = @"KeyOfDocumentUnReadCount";
 
 - (void) resetDocumentReadCount
 {
-//     [WGGlobalCache clearUnreadCountByKbguid:self.kbguid accountUserId:self.accountUserId];
+     [WGGlobalCache clearUnreadCountByKbguid:self.kbguid accountUserId:self.accountUserId];
 }
-//
 - (BOOL) setSyncVersion:(NSString*)type  version:(int64_t)ver
 {
     NSString* verString = [NSString stringWithFormat:@"%lld", ver];
@@ -515,7 +514,7 @@ static NSString* const KeyOfDocumentUnReadCount = @"KeyOfDocumentUnReadCount";
         }];
     }
     [self resetDocumentReadCount];
-//    [WGGlobalCache clearAbstractForDocument:guid];
+    [WGGlobalCache clearAbstractForDocument:guid];
     return ret;
 }
 

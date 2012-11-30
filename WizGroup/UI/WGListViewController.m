@@ -242,15 +242,12 @@
    
     
     [nav setWgToolItems:@[searchItem,flexItem]];
-    UIBarButtonItem* backToHomeItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"doc_list_home"] hightedImage:nil target:self selector:@selector(backToHome)];
     
 
     UIBarButtonItem* editCommentItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"listEditIcon"] hightedImage:nil target:self selector:@selector(editComment)];
     
     UIBarButtonItem* feedBackItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"listFeedbackIcon"] hightedImage:nil target:self selector:@selector(feedbackCenter)];
-    [nav setWgToolItems:@[backToHomeItem,flexItem,editCommentItem,feedBackItem]];
-
-    [nav setWgToolItems:@[flexItem]];
+    [nav setWgToolItems:@[searchItem,flexItem,editCommentItem,feedBackItem]];
 }
 
 - (void) viewWillAppear:(BOOL)animated
