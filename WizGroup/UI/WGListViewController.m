@@ -266,8 +266,6 @@
     [super viewDidUnload];
     [self.pullToRefreshView removeFromSuperview];
     self.pullToRefreshView = nil;
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
