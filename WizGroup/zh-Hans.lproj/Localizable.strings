@@ -121,3 +121,7 @@
 "Sync already in progress, please wait..."="已经在同步中，请耐心等待...";
 "Document format was too complex and can not be edited, and will use the old editor.If you choose to edit this note, images and text-formatting will be lost. Continue?"="文档格式太复杂无法使用新编辑器编辑，使用旧编辑器编辑将会丢失格式和图片，是否继续编辑？";
 "Click To Login"="点击登录";
+"History"="反馈历史";
+"FeedBack"="发表反馈意见";
+"NoteTitle" = "标题:";
+"tap to edit body text" = "轻触以编辑文字内容";
