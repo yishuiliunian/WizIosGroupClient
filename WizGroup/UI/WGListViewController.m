@@ -23,6 +23,7 @@
 
 #import "WizNotificationCenter.h"
 #import "WGFeedBackViewController.h"
+#import "WGCreateNoteViewController.h"
 
 
 @interface WGListViewController () <WGReadListDelegate,EGORefreshTableHeaderDelegate>
@@ -178,11 +179,17 @@
 }
 - (void) editComment
 {
-    
+    WGCreateNoteViewController* editCommentVC = [[WGCreateNoteViewController alloc]init];
+    editCommentVC.kbGuid = self.kbGuid;
+    editCommentVC.accountUserId = self.accountUserId;
+    [self.navigationController presentModalViewController:editCommentVC animated:YES];
+    [editCommentVC release];
 }
 - (void) feedbackCenter
 {
     WGFeedBackViewController* feedbackVC = [[WGFeedBackViewController alloc]init];
+    feedbackVC.kbGuid = self.kbGuid;
+    feedbackVC.accountUserId = self.accountUserId;
     feedbackVC.delegate = self;
     feedbackVC.modalPresentationStyle = UIModalPresentationFullScreen;
 	feedbackVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
@@ -204,9 +211,11 @@
     UIBarButtonItem* flexItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease];
     
     UIBarButtonItem* backToHomeItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"doc_list_home"] hightedImage:nil target:self selector:@selector(backToHome)];
-   
+    
+    UIBarButtonItem* editCommentItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"listEditIcon"] hightedImage:nil target:self selector:@selector(editComment)];
+    
     UIBarButtonItem* feedBackItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"listFeedbackIcon"] hightedImage:nil target:self selector:@selector(feedbackCenter)];
-    [nav setWgToolItems:@[backToHomeItem,flexItem,feedBackItem]];
+    [nav setWgToolItems:@[backToHomeItem,flexItem,editCommentItem,feedBackItem]];
 }
 
 - (void) viewWillAppear:(BOOL)animated

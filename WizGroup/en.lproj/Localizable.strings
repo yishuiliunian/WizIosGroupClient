@@ -121,3 +121,7 @@
 "Sync already in progress, please wait..."="Sync already in progress, please wait...";
 "Document format was too complex and can not be edited, and will use the old editor.If you choose to edit this note, images and text-formatting will be lost. Continue?"="Document format was too complex and can not be edited, and will use the old editor.If you choose to edit this note, images and text-formatting will be lost. Continue?";
 "Click To Login"="Click To Login";
+"History"="History";
+"FeedBack"="FeedBack";
+"NoteTitle" = "Title:";
+"tap to edit body text"="Tap to edit body text";
