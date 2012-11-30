@@ -27,7 +27,7 @@ enum WGFolderListIndex {
     TreeNode* rootTreeNode;
     NSMutableArray* allNodes;
 }
-@property (nonatomic, retain) NSMutableArray* allNodes;
+@property (nonatomic, assign, getter = needDisplayNodesArray) NSMutableArray* needDisplayNodesArray;
 @end
 
 @implementation WGChooseFolderViewController
@@ -35,7 +35,7 @@ enum WGFolderListIndex {
 @synthesize accountUserId;
 @synthesize listType;
 @synthesize listKeyStr;
-@synthesize allNodes;
+
 
 - (void) dealloc
 {
@@ -44,6 +44,11 @@ enum WGFolderListIndex {
     [kbGuid release];
     [accountUserId release];
     [super dealloc];
+}
+
+- (NSMutableArray*) needDisplayNodesArray
+{
+    return [allNodes objectAtIndex:WGFolderListIndexOfUserTree];
 }
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -56,9 +61,15 @@ enum WGFolderListIndex {
         folderRootNode.keyString = @"key";
         folderRootNode.isExpanded = YES;
         rootTreeNode = folderRootNode;
-
+        
+        NSMutableArray* needDisplayTreeNodes = [NSMutableArray array] ;
+        //
+        NSMutableArray*  customNodes = [NSMutableArray array];
+        
         allNodes = [[NSMutableArray array] retain];
         //
+        [allNodes addObject:customNodes];
+        [allNodes addObject:needDisplayTreeNodes];
         
         listKeyStr = nil;
         listType = 0;
@@ -112,19 +123,20 @@ enum WGFolderListIndex {
         }
     }
 }
-//- (void) reloadCustomNodes
-//{
-//    NSMutableArray* customNodes = [allNodes objectAtIndex:WGFolderListIndexOfCustom];
-//    [customNodes removeAllObjects];
-//    
-//    id<WizSettingsDbDelegate> db = [[WizDbManager shareInstance] getGlobalSettingDb];
-//    NSLog(@"%@  %@",self.kbGuid,self.accountUserId);
-//    WizGroup* curretnGroup = [ db groupFromGuid:self.kbGuid accountUserId:self.accountUserId];
-//    [customNodes addObject:curretnGroup.kbName];
-//}
+- (void) reloadCustomNodes
+{
+    NSMutableArray* customNodes = [allNodes objectAtIndex:WGFolderListIndexOfCustom];
+    [customNodes removeAllObjects];
+    
+    id<WizSettingsDbDelegate> db = [[WizDbManager shareInstance] getGlobalSettingDb];
+    NSLog(@"%@  %@",self.kbGuid,self.accountUserId);
+    WizGroup* curretnGroup = [ db groupFromGuid:self.kbGuid accountUserId:self.accountUserId];
+    [customNodes addObject:curretnGroup.kbName];
+}
 
 - (void )reloadAllTreeNodes
 {
+    [self reloadCustomNodes];
     [self reloadTagRootNode];
 }
 
@@ -132,8 +144,8 @@ enum WGFolderListIndex {
 {
     [self reloadAllTreeNodes];
     //
-    [self.allNodes removeAllObjects];
-    [self.allNodes addObjectsFromArray:[rootTreeNode allExpandedChildrenNodes]];
+    [self.needDisplayNodesArray removeAllObjects];
+    [self.needDisplayNodesArray addObjectsFromArray:[rootTreeNode allExpandedChildrenNodes]];
     [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
 }
 
@@ -142,11 +154,6 @@ enum WGFolderListIndex {
 {
     [super viewDidLoad];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    
-    id<WizSettingsDbDelegate> db = [[WizDbManager shareInstance] getGlobalSettingDb];
-    NSLog(@"%@  %@",self.kbGuid,self.accountUserId);
-    WizGroup* curretnGroup = [ db groupFromGuid:self.kbGuid accountUserId:self.accountUserId];
-    [allNodes addObject:curretnGroup.kbName];
     [self reloadAllData];
     [self loadNavigation];
     self.tableView.backgroundColor = WGDetailCellBackgroudColor;
@@ -194,16 +201,17 @@ enum WGFolderListIndex {
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return [allNodes count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [allNodes count];
+    return [[allNodes objectAtIndex:section] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (indexPath.section == WGFolderListIndexOfUserTree) {
         static NSString *CellIdentifier = @"WizPadTreeTableCell";
         WizPadTreeTableCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         
@@ -211,22 +219,44 @@ enum WGFolderListIndex {
             cell = [[[WizPadTreeTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
             cell.delegate = self;
             cell.contentView.backgroundColor = WGDetailCellBackgroudColor;
-        }        
-        TreeNode* node = [self.allNodes objectAtIndex:indexPath.row];
-        cell.strTreeNodeKey = node.keyString;
-        if ([cell.strTreeNodeKey isEqualToString:listKeyStr]) {
+        }
+        if (indexPath.section == WGFolderListIndexOfUserTree) {
+            TreeNode* node = [self.needDisplayNodesArray objectAtIndex:indexPath.row];
+            cell.strTreeNodeKey = node.keyString;
+            if ([cell.strTreeNodeKey isEqualToString:listKeyStr]) {
+                cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            }else{
+                cell.accessoryType = UITableViewCellAccessoryNone;
+            }
+        }
+        return cell;
+    }
+    else
+    {
+        static NSString* CellIndentifier2 = @"CellIndentifier2";
+        UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:CellIndentifier2];
+        if(!cell)
+        {
+            cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIndentifier2] autorelease];
+            cell.textLabel.font = [UIFont systemFontOfSize:16];
+            cell.contentView.backgroundColor = WGDetailCellBackgroudColor;
+        }
+        if (listType == 3) {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
-        }else{
-            cell.accessoryType = UITableViewCellAccessoryNone;
-        }        
-    return cell;
+        }
+        cell.textLabel.text = [[allNodes objectAtIndex:WGFolderListIndexOfCustom] objectAtIndex:indexPath.row];
+        return cell;
+    }
+
 }
 
 - (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    WizPadTreeTableCell* treeCell = (WizPadTreeTableCell*)cell;
-    [treeCell showExpandedIndicatory];
-    [treeCell setNeedsDisplay];
+    if (indexPath.section == WGFolderListIndexOfUserTree) {
+        WizPadTreeTableCell* treeCell = (WizPadTreeTableCell*)cell;
+        [treeCell showExpandedIndicatory];
+        [treeCell setNeedsDisplay];
+    }
 }
 
 
@@ -239,14 +269,14 @@ enum WGFolderListIndex {
 {
     if (rootTreeNode.isExpanded) {
         rootTreeNode.isExpanded = !rootTreeNode.isExpanded;
-        [self.allNodes removeAllObjects];
+        [self.needDisplayNodesArray removeAllObjects];
         [self.tableView reloadData];
     }
     else
     {
         rootTreeNode.isExpanded = !rootTreeNode.isExpanded;
-        [self.allNodes removeAllObjects];
-        [self.allNodes addObjectsFromArray:[rootTreeNode allExpandedChildrenNodes]];
+        [self.needDisplayNodesArray removeAllObjects];
+        [self.needDisplayNodesArray addObjectsFromArray:[rootTreeNode allExpandedChildrenNodes]];
         [self.tableView reloadData];
     }
     ;
@@ -255,9 +285,9 @@ enum WGFolderListIndex {
 - (void) onExpandedNode:(TreeNode *)node
 {
     NSInteger row = NSNotFound;
-    for (int i = 0 ; i < [self.allNodes count]; i++) {
+    for (int i = 0 ; i < [self.needDisplayNodesArray count]; i++) {
         
-        TreeNode* eachNode = [self.allNodes objectAtIndex:i];
+        TreeNode* eachNode = [self.needDisplayNodesArray objectAtIndex:i];
         if ([eachNode.keyString isEqualToString:node.keyString]) {
             row = i;
             break;
@@ -265,7 +295,7 @@ enum WGFolderListIndex {
     }
     if(row != NSNotFound)
     {
-        [self onExpandNode:node refrenceIndexPath:[NSIndexPath indexPathForRow:row inSection:0]];
+        [self onExpandNode:node refrenceIndexPath:[NSIndexPath indexPathForRow:row inSection:WGFolderListIndexOfUserTree]];
     }
 }
 
@@ -276,14 +306,14 @@ enum WGFolderListIndex {
         node.isExpanded = YES;
         NSArray* array = [node allExpandedChildrenNodes];
         
-        NSInteger startPostion = [self.allNodes count] == 0? 0: indexPath.row+1;
+        NSInteger startPostion = [self.needDisplayNodesArray count] == 0? 0: indexPath.row+1;
         
         NSMutableArray* rows = [NSMutableArray array];
         for (int i = 0; i < [array count]; i++) {
             NSInteger  positionRow = startPostion+ i;
             
             TreeNode* node = [array objectAtIndex:i];
-            [self.allNodes insertObject:node atIndex:positionRow];
+            [self.needDisplayNodesArray insertObject:node atIndex:positionRow];
             
             [rows addObject:[NSIndexPath indexPathForRow:positionRow inSection:indexPath.section]];
         }
@@ -297,8 +327,8 @@ enum WGFolderListIndex {
         node.isExpanded = NO;
         NSMutableArray* deletedIndexPaths = [NSMutableArray array];
         NSMutableArray* deletedNodes = [NSMutableArray array];
-        for (int i = indexPath.row; i < [self.allNodes count]; i++) {
-            TreeNode* displayedNode = [self.allNodes objectAtIndex:i];
+        for (int i = indexPath.row; i < [self.needDisplayNodesArray count]; i++) {
+            TreeNode* displayedNode = [self.needDisplayNodesArray objectAtIndex:i];
             if ([node childNodeFromKeyString:displayedNode.keyString]) {
                 [deletedIndexPaths addObject:[NSIndexPath indexPathForRow:i inSection:indexPath.section]];
                 [deletedNodes addObject:displayedNode];
@@ -306,7 +336,7 @@ enum WGFolderListIndex {
         }
         
         for (TreeNode* each in deletedNodes) {
-            [self.allNodes removeObject:each];
+            [self.needDisplayNodesArray removeObject:each];
         }
         
         [self.tableView beginUpdates];
@@ -360,27 +390,30 @@ enum WGFolderListIndex {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    TreeNode* node = [self.allNodes objectAtIndex:indexPath.row];
-    listType = WGListTypeTag;
-    listKeyStr = node.keyString;
+    if (indexPath.section == WGFolderListIndexOfUserTree) {
+        TreeNode* node = [self.needDisplayNodesArray objectAtIndex:indexPath.row];
+        listType = WGListTypeTag;
+        listKeyStr = node.keyString;
+    }
+    else
+    {
+        listType = WGListTypeNoTags;
+        listKeyStr = @"";
+    }
     NSLog(@"%@  %d",listKeyStr,listType);
     [self.tableView reloadData];
-//    UINavigationController* navCon = (UINavigationController*) self.revealSideViewController.rootViewController ;
-//    for (UIViewController* each in navCon.viewControllers) {
-//        if ([each isKindOfClass:[WGListViewController class]]) {
-//            WGListViewController* listController = (WGListViewController*)each;
-//            listController.listType = listType;
-//            listController.listKey = listKeyStr;
-//            break;
-//        }
-//    }
-//    
-//    [self.revealSideViewController pushOldViewControllerOnDirection:PPRevealSideDirectionLeft animated:YES];
-    
 }
+
 - (NSString*) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    return NSLocalizedString(@"Folder", nil);
+    if (section == WGFolderListIndexOfCustom) {
+        return NSLocalizedString(@"Custom", nil);
+    }
+    else if (section == WGFolderListIndexOfUserTree)
+    {
+        return NSLocalizedString(@"Folder", nil);
+    }
+    return nil;
 }
 - (void) viewDidAppear:(BOOL)animated
 {

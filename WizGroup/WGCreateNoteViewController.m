@@ -57,14 +57,6 @@
     float endX = size.width;
     float endY = size.height;
     
-//    WGNavigationBar* navBar = [[WGNavigationBar alloc]initWithFrame:CGRectMake(0, 0, endX, 44)];
-//    UINavigationItem* barItem = [[UINavigationItem alloc]initWithTitle:@""];
-//    UIBarButtonItem* backTo = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"feedback_back"] hightedImage:nil target:self selector:@selector(backTo)];
-//    UIBarButtonItem* noteInfo = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"group_createNote_showInfo"] hightedImage:nil target:self selector:@selector(showInfo)];
-//    barItem.leftBarButtonItem = backTo;
-//    barItem.rightBarButtonItem = noteInfo;
-//    [navBar pushNavigationItem:barItem animated:YES];
-    
     WGNavigationBarNew* navBar = [[WGNavigationBarNew alloc]initWithFrame:CGRectMake(0, 0, endX, 44)];
     UIBarButtonItem* backTo = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"feedback_back"] hightedImage:nil target:self selector:@selector(backTo)];
     UIBarButtonItem* noteInfo = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"group_createNote_showInfo"] hightedImage:nil target:self selector:@selector(showInfo)];
