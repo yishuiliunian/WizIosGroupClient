@@ -1,0 +1,489 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F5455C8E156465C3009DD74D /* CQMFloatingNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = F5455C8B156465C3009DD74D /* CQMFloatingNavigationBar.m */; };
+		F5455C8F156465C3009DD74D /* CQMPathUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = F5455C8D156465C3009DD74D /* CQMPathUtilities.m */; };
+		F54E32A615620EE70057A34F /* CQMFloatingFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = F54E329B15620EE70057A34F /* CQMFloatingFrameView.m */; };
+		F54E32A715620EE70057A34F /* CQMFloatingController.m in Sources */ = {isa = PBXBuildFile; fileRef = F54E329D15620EE70057A34F /* CQMFloatingController.m */; };
+		F54E32AD15620F2F0057A34F /* CQMFloatingContentOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = F54E32AC15620F2F0057A34F /* CQMFloatingContentOverlayView.m */; };
+		F54E32B0156271030057A34F /* DemoTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F54E32AF156271030057A34F /* DemoTableViewController.m */; };
+		F54E32B3156273780057A34F /* DemoDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F54E32B2156273780057A34F /* DemoDetailViewController.m */; };
+		F5C422441560BF2300F7E3EE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C422431560BF2300F7E3EE /* UIKit.framework */; };
+		F5C422461560BF2300F7E3EE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C422451560BF2300F7E3EE /* Foundation.framework */; };
+		F5C422481560BF2300F7E3EE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C422471560BF2300F7E3EE /* CoreGraphics.framework */; };
+		F5C4224E1560BF2300F7E3EE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F5C4224C1560BF2300F7E3EE /* InfoPlist.strings */; };
+		F5C4225C1560BF2400F7E3EE /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C4225B1560BF2400F7E3EE /* SenTestingKit.framework */; };
+		F5C4225D1560BF2400F7E3EE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C422431560BF2300F7E3EE /* UIKit.framework */; };
+		F5C4225E1560BF2400F7E3EE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C422451560BF2300F7E3EE /* Foundation.framework */; };
+		F5C422661560BF2400F7E3EE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F5C422641560BF2400F7E3EE /* InfoPlist.strings */; };
+		F5C422691560BF2400F7E3EE /* CQMFloatingControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F5C422681560BF2400F7E3EE /* CQMFloatingControllerTests.m */; };
+		F5ED3EA315620A810058C7F1 /* CQMAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F5ED3EA015620A810058C7F1 /* CQMAppDelegate.m */; };
+		F5ED3EA415620A810058C7F1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F5ED3EA115620A810058C7F1 /* main.m */; };
+		F5ED3EA515620A810058C7F1 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F5ED3EA215620A810058C7F1 /* MainWindow.xib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F5C4225F1560BF2400F7E3EE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F5C422361560BF2300F7E3EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F5C4223E1560BF2300F7E3EE;
+			remoteInfo = CQMFloatingController;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		F5455C8A156465C3009DD74D /* CQMFloatingNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CQMFloatingNavigationBar.h; sourceTree = "<group>"; };
+		F5455C8B156465C3009DD74D /* CQMFloatingNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CQMFloatingNavigationBar.m; sourceTree = "<group>"; };
+		F5455C8C156465C3009DD74D /* CQMPathUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; path = CQMPathUtilities.h; sourceTree = "<group>"; };
+		F5455C8D156465C3009DD74D /* CQMPathUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CQMPathUtilities.m; sourceTree = "<group>"; };
+		F54E329A15620EE70057A34F /* CQMFloatingFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CQMFloatingFrameView.h; sourceTree = "<group>"; };
+		F54E329B15620EE70057A34F /* CQMFloatingFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CQMFloatingFrameView.m; sourceTree = "<group>"; };
+		F54E329C15620EE70057A34F /* CQMFloatingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CQMFloatingController.h; sourceTree = "<group>"; };
+		F54E329D15620EE70057A34F /* CQMFloatingController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CQMFloatingController.m; sourceTree = "<group>"; };
+		F54E32AB15620F2F0057A34F /* CQMFloatingContentOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CQMFloatingContentOverlayView.h; sourceTree = "<group>"; };
+		F54E32AC15620F2F0057A34F /* CQMFloatingContentOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CQMFloatingContentOverlayView.m; sourceTree = "<group>"; };
+		F54E32AE156271030057A34F /* DemoTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoTableViewController.h; sourceTree = "<group>"; };
+		F54E32AF156271030057A34F /* DemoTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoTableViewController.m; sourceTree = "<group>"; };
+		F54E32B1156273780057A34F /* DemoDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoDetailViewController.h; sourceTree = "<group>"; };
+		F54E32B2156273780057A34F /* DemoDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoDetailViewController.m; sourceTree = "<group>"; };
+		F5C4223F1560BF2300F7E3EE /* CQMFloatingController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CQMFloatingController.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F5C422431560BF2300F7E3EE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		F5C422451560BF2300F7E3EE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		F5C422471560BF2300F7E3EE /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		F5C4224B1560BF2300F7E3EE /* CQMFloatingController-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CQMFloatingController-Info.plist"; sourceTree = "<group>"; };
+		F5C4224D1560BF2300F7E3EE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F5C422511560BF2300F7E3EE /* CQMFloatingController-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CQMFloatingController-Prefix.pch"; sourceTree = "<group>"; };
+		F5C4225A1560BF2400F7E3EE /* CQMFloatingControllerTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CQMFloatingControllerTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F5C4225B1560BF2400F7E3EE /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		F5C422631560BF2400F7E3EE /* CQMFloatingControllerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CQMFloatingControllerTests-Info.plist"; sourceTree = "<group>"; };
+		F5C422651560BF2400F7E3EE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F5C422671560BF2400F7E3EE /* CQMFloatingControllerTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CQMFloatingControllerTests.h; sourceTree = "<group>"; };
+		F5C422681560BF2400F7E3EE /* CQMFloatingControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CQMFloatingControllerTests.m; sourceTree = "<group>"; };
+		F5ED3E9F15620A810058C7F1 /* CQMAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CQMAppDelegate.h; sourceTree = "<group>"; };
+		F5ED3EA015620A810058C7F1 /* CQMAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CQMAppDelegate.m; sourceTree = "<group>"; };
+		F5ED3EA115620A810058C7F1 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		F5ED3EA215620A810058C7F1 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F5C4223C1560BF2300F7E3EE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F5C422441560BF2300F7E3EE /* UIKit.framework in Frameworks */,
+				F5C422461560BF2300F7E3EE /* Foundation.framework in Frameworks */,
+				F5C422481560BF2300F7E3EE /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F5C422561560BF2400F7E3EE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F5C4225C1560BF2400F7E3EE /* SenTestingKit.framework in Frameworks */,
+				F5C4225D1560BF2400F7E3EE /* UIKit.framework in Frameworks */,
+				F5C4225E1560BF2400F7E3EE /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F54E329915620EE70057A34F /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				F5455C8C156465C3009DD74D /* CQMPathUtilities.h */,
+				F5455C8D156465C3009DD74D /* CQMPathUtilities.m */,
+				F54E329A15620EE70057A34F /* CQMFloatingFrameView.h */,
+				F54E329B15620EE70057A34F /* CQMFloatingFrameView.m */,
+				F5455C8A156465C3009DD74D /* CQMFloatingNavigationBar.h */,
+				F5455C8B156465C3009DD74D /* CQMFloatingNavigationBar.m */,
+				F54E32AB15620F2F0057A34F /* CQMFloatingContentOverlayView.h */,
+				F54E32AC15620F2F0057A34F /* CQMFloatingContentOverlayView.m */,
+				F54E329C15620EE70057A34F /* CQMFloatingController.h */,
+				F54E329D15620EE70057A34F /* CQMFloatingController.m */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		F5C422341560BF2300F7E3EE = {
+			isa = PBXGroup;
+			children = (
+				F5C422491560BF2300F7E3EE /* CQMFloatingController */,
+				F5C422611560BF2400F7E3EE /* CQMFloatingControllerTests */,
+				F5C422421560BF2300F7E3EE /* Frameworks */,
+				F5C422401560BF2300F7E3EE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F5C422401560BF2300F7E3EE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F5C4223F1560BF2300F7E3EE /* CQMFloatingController.app */,
+				F5C4225A1560BF2400F7E3EE /* CQMFloatingControllerTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F5C422421560BF2300F7E3EE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F5C422431560BF2300F7E3EE /* UIKit.framework */,
+				F5C422451560BF2300F7E3EE /* Foundation.framework */,
+				F5C422471560BF2300F7E3EE /* CoreGraphics.framework */,
+				F5C4225B1560BF2400F7E3EE /* SenTestingKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F5C422491560BF2300F7E3EE /* CQMFloatingController */ = {
+			isa = PBXGroup;
+			children = (
+				F54E329915620EE70057A34F /* Classes */,
+				F5ED3E9E15620A810058C7F1 /* Demo */,
+				F5C4224A1560BF2300F7E3EE /* Supporting Files */,
+			);
+			path = CQMFloatingController;
+			sourceTree = "<group>";
+		};
+		F5C4224A1560BF2300F7E3EE /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F5C4224B1560BF2300F7E3EE /* CQMFloatingController-Info.plist */,
+				F5C4224C1560BF2300F7E3EE /* InfoPlist.strings */,
+				F5C422511560BF2300F7E3EE /* CQMFloatingController-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F5C422611560BF2400F7E3EE /* CQMFloatingControllerTests */ = {
+			isa = PBXGroup;
+			children = (
+				F5C422671560BF2400F7E3EE /* CQMFloatingControllerTests.h */,
+				F5C422681560BF2400F7E3EE /* CQMFloatingControllerTests.m */,
+				F5C422621560BF2400F7E3EE /* Supporting Files */,
+			);
+			path = CQMFloatingControllerTests;
+			sourceTree = "<group>";
+		};
+		F5C422621560BF2400F7E3EE /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F5C422631560BF2400F7E3EE /* CQMFloatingControllerTests-Info.plist */,
+				F5C422641560BF2400F7E3EE /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F5ED3E9E15620A810058C7F1 /* Demo */ = {
+			isa = PBXGroup;
+			children = (
+				F5ED3E9F15620A810058C7F1 /* CQMAppDelegate.h */,
+				F5ED3EA015620A810058C7F1 /* CQMAppDelegate.m */,
+				F5ED3EA115620A810058C7F1 /* main.m */,
+				F5ED3EA215620A810058C7F1 /* MainWindow.xib */,
+				F54E32AE156271030057A34F /* DemoTableViewController.h */,
+				F54E32AF156271030057A34F /* DemoTableViewController.m */,
+				F54E32B1156273780057A34F /* DemoDetailViewController.h */,
+				F54E32B2156273780057A34F /* DemoDetailViewController.m */,
+			);
+			path = Demo;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F5C4223E1560BF2300F7E3EE /* CQMFloatingController */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F5C4226C1560BF2400F7E3EE /* Build configuration list for PBXNativeTarget "CQMFloatingController" */;
+			buildPhases = (
+				F5C4223B1560BF2300F7E3EE /* Sources */,
+				F5C4223C1560BF2300F7E3EE /* Frameworks */,
+				F5C4223D1560BF2300F7E3EE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CQMFloatingController;
+			productName = CQMFloatingController;
+			productReference = F5C4223F1560BF2300F7E3EE /* CQMFloatingController.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F5C422591560BF2400F7E3EE /* CQMFloatingControllerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F5C4226F1560BF2400F7E3EE /* Build configuration list for PBXNativeTarget "CQMFloatingControllerTests" */;
+			buildPhases = (
+				F5C422551560BF2400F7E3EE /* Sources */,
+				F5C422561560BF2400F7E3EE /* Frameworks */,
+				F5C422571560BF2400F7E3EE /* Resources */,
+				F5C422581560BF2400F7E3EE /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F5C422601560BF2400F7E3EE /* PBXTargetDependency */,
+			);
+			name = CQMFloatingControllerTests;
+			productName = CQMFloatingControllerTests;
+			productReference = F5C4225A1560BF2400F7E3EE /* CQMFloatingControllerTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F5C422361560BF2300F7E3EE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = CQM;
+				LastUpgradeCheck = 0430;
+			};
+			buildConfigurationList = F5C422391560BF2300F7E3EE /* Build configuration list for PBXProject "CQMFloatingController" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = F5C422341560BF2300F7E3EE;
+			productRefGroup = F5C422401560BF2300F7E3EE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F5C4223E1560BF2300F7E3EE /* CQMFloatingController */,
+				F5C422591560BF2400F7E3EE /* CQMFloatingControllerTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F5C4223D1560BF2300F7E3EE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F5C4224E1560BF2300F7E3EE /* InfoPlist.strings in Resources */,
+				F5ED3EA515620A810058C7F1 /* MainWindow.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F5C422571560BF2400F7E3EE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F5C422661560BF2400F7E3EE /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		F5C422581560BF2400F7E3EE /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F5C4223B1560BF2300F7E3EE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F5ED3EA315620A810058C7F1 /* CQMAppDelegate.m in Sources */,
+				F5ED3EA415620A810058C7F1 /* main.m in Sources */,
+				F54E32A615620EE70057A34F /* CQMFloatingFrameView.m in Sources */,
+				F54E32A715620EE70057A34F /* CQMFloatingController.m in Sources */,
+				F54E32AD15620F2F0057A34F /* CQMFloatingContentOverlayView.m in Sources */,
+				F54E32B0156271030057A34F /* DemoTableViewController.m in Sources */,
+				F54E32B3156273780057A34F /* DemoDetailViewController.m in Sources */,
+				F5455C8E156465C3009DD74D /* CQMFloatingNavigationBar.m in Sources */,
+				F5455C8F156465C3009DD74D /* CQMPathUtilities.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F5C422551560BF2400F7E3EE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F5C422691560BF2400F7E3EE /* CQMFloatingControllerTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F5C422601560BF2400F7E3EE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F5C4223E1560BF2300F7E3EE /* CQMFloatingController */;
+			targetProxy = F5C4225F1560BF2400F7E3EE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		F5C4224C1560BF2300F7E3EE /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F5C4224D1560BF2300F7E3EE /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		F5C422641560BF2400F7E3EE /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F5C422651560BF2400F7E3EE /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F5C4226A1560BF2400F7E3EE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		F5C4226B1560BF2400F7E3EE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F5C4226D1560BF2400F7E3EE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CQMFloatingController/CQMFloatingController-Prefix.pch";
+				INFOPLIST_FILE = "CQMFloatingController/CQMFloatingController-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		F5C4226E1560BF2400F7E3EE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CQMFloatingController/CQMFloatingController-Prefix.pch";
+				INFOPLIST_FILE = "CQMFloatingController/CQMFloatingController-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		F5C422701560BF2400F7E3EE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CQMFloatingController.app/CQMFloatingController";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CQMFloatingController/CQMFloatingController-Prefix.pch";
+				INFOPLIST_FILE = "CQMFloatingControllerTests/CQMFloatingControllerTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		F5C422711560BF2400F7E3EE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CQMFloatingController.app/CQMFloatingController";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CQMFloatingController/CQMFloatingController-Prefix.pch";
+				INFOPLIST_FILE = "CQMFloatingControllerTests/CQMFloatingControllerTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F5C422391560BF2300F7E3EE /* Build configuration list for PBXProject "CQMFloatingController" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F5C4226A1560BF2400F7E3EE /* Debug */,
+				F5C4226B1560BF2400F7E3EE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F5C4226C1560BF2400F7E3EE /* Build configuration list for PBXNativeTarget "CQMFloatingController" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F5C4226D1560BF2400F7E3EE /* Debug */,
+				F5C4226E1560BF2400F7E3EE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F5C4226F1560BF2400F7E3EE /* Build configuration list for PBXNativeTarget "CQMFloatingControllerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F5C422701560BF2400F7E3EE /* Debug */,
+				F5C422711560BF2400F7E3EE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F5C422361560BF2300F7E3EE /* Project object */;
+}

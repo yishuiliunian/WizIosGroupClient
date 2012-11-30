@@ -12,6 +12,7 @@
 #import "WizSettingsDataBase.h"
 #import "WizFileManager.h"
 #import "WizGlobals.h"
+
 static void handleRootException ( NSException* exception)
 {
     NSString* name = [ exception name ];
@@ -74,6 +75,7 @@ static void handleRootException ( NSException* exception)
     
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     // Override point for customization after application launch.
+    
     WGMainViewController* mainController = [[WGMainViewController alloc] init];
     
     NSString* activeAccountUserId = [accountManager activeAccountUserId];
