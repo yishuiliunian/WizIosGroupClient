@@ -7,13 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "WGChooseFolderViewController.h"
 
-@interface WGCreateNoteViewController : UIViewController<UITextViewDelegate,UITextFieldDelegate>
+@interface WGCreateNoteViewController : UIViewController<UITextViewDelegate,UITextFieldDelegate,WGChooseFolderViewControllerDelegate>
 
 @property (nonatomic, retain) NSString* kbGuid;
 @property (nonatomic, retain) NSString* accountUserId;
 @property (retain, nonatomic)UIScrollView* backgroundView;
-@property (retain, nonatomic)UITextField* titilView;
+@property (retain, nonatomic)UITextField* titleView;
 @property (retain, nonatomic)UITextView* contentView;
 @property (retain, nonatomic)UIImageView* lineView;
 @property (retain, nonatomic)UIButton* keyboardBack_btn;

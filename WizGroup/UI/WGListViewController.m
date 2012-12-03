@@ -244,9 +244,9 @@
     [nav setWgToolItems:@[searchItem,flexItem]];
     
 
-    UIBarButtonItem* editCommentItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"listEditIcon"] hightedImage:nil target:self selector:@selector(editComment)];
+    UIBarButtonItem* editCommentItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"doc_list_new@2"] hightedImage:nil target:self selector:@selector(editComment)];
     
-    UIBarButtonItem* feedBackItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"listFeedbackIcon"] hightedImage:nil target:self selector:@selector(feedbackCenter)];
+    UIBarButtonItem* feedBackItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"doc_list_feedback"] hightedImage:nil target:self selector:@selector(feedbackCenter)];
     [nav setWgToolItems:@[searchItem,flexItem,editCommentItem,feedBackItem]];
 }
 

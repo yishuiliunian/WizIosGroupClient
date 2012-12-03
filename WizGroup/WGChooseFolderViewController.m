@@ -31,6 +31,7 @@ enum WGFolderListIndex {
 @end
 
 @implementation WGChooseFolderViewController
+@synthesize delegate;
 @synthesize kbGuid;
 @synthesize accountUserId;
 @synthesize listType;
@@ -41,8 +42,8 @@ enum WGFolderListIndex {
 {
     [allNodes release];
     [rootTreeNode release];
-    [kbGuid release];
-    [accountUserId release];
+//    [kbGuid release];
+//    [accountUserId release];
     [super dealloc];
 }
 
@@ -70,9 +71,7 @@ enum WGFolderListIndex {
         //
         [allNodes addObject:customNodes];
         [allNodes addObject:needDisplayTreeNodes];
-        
-        listKeyStr = nil;
-        listType = 0;
+
     }
     return self;
 }
@@ -129,7 +128,6 @@ enum WGFolderListIndex {
     [customNodes removeAllObjects];
     
     id<WizSettingsDbDelegate> db = [[WizDbManager shareInstance] getGlobalSettingDb];
-    NSLog(@"%@  %@",self.kbGuid,self.accountUserId);
     WizGroup* curretnGroup = [ db groupFromGuid:self.kbGuid accountUserId:self.accountUserId];
     [customNodes addObject:curretnGroup.kbName];
 }
@@ -173,7 +171,7 @@ enum WGFolderListIndex {
 
 - (void) saveAndBack
 {
-    [self dismissModalViewControllerAnimated:YES];
+    [self.delegate didFinishChoose:self];
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -190,6 +188,11 @@ enum WGFolderListIndex {
     
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -243,6 +246,8 @@ enum WGFolderListIndex {
         }
         if (listType == 3) {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        }else{
+            cell.accessoryType = UITableViewCellAccessoryNone;
         }
         cell.textLabel.text = [[allNodes objectAtIndex:WGFolderListIndexOfCustom] objectAtIndex:indexPath.row];
         return cell;
@@ -390,6 +395,9 @@ enum WGFolderListIndex {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
+    listKeyStr = nil;
+    listType = 0;
     if (indexPath.section == WGFolderListIndexOfUserTree) {
         TreeNode* node = [self.needDisplayNodesArray objectAtIndex:indexPath.row];
         listType = WGListTypeTag;

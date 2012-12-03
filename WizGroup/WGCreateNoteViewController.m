@@ -21,7 +21,7 @@
 @synthesize kbGuid;
 @synthesize accountUserId;
 @synthesize backgroundView;
-@synthesize titilView;
+@synthesize titleView;
 @synthesize contentView;
 @synthesize lineView;
 @synthesize keyboardBack_btn;
@@ -36,22 +36,28 @@
 }
 - (void) saveTheDocument
 {
-    NSString* title = self.titilView.text;
+    NSString* title = self.titleView.text;
     NSString* bodyText = self.contentView.text;
-    WizDocument* doc = [[[WizDocument alloc] init] autorelease];
-    doc.strGuid = [WizGlobals genGUID];
-    doc.strTitle  = title;
-    doc.nLocalChanged = WizEditDocumentTypeAllChanged;
-    doc.bServerChanged = NO;
-    NSDictionary* docDic = [doc getModelDictionary];
-    bodyText = [self htmlString:bodyText title:title];
-    NSString* indexFilePath = [[WizFileManager shareManager]getDocumentFilePath:DocumentFileIndexName documentGUID:doc.strGuid accountUserId:self.accountUserId];
-    NSString* moblieFilePath = [[WizFileManager shareManager] getDocumentFilePath:DocumentFileMobileName documentGUID:doc.strGuid accountUserId:self.accountUserId];
-    [bodyText writeToFile:indexFilePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
-    [bodyText writeToFile:moblieFilePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
-    id<WizMetaDataBaseDelegate> db = [[WizDbManager shareInstance] getMetaDataBaseForAccount:self.accountUserId kbGuid:self.kbGuid];
-    [db updateDocument:docDic];
-    [[WizSyncCenter defaultCenter] uploadDocument:doc kbguid:self.kbGuid accountUserId:self.accountUserId];
+    if (!title || [title isEqualToString:@""]) {
+        title = NSLocalizedString(@"No Title", nil);
+    }
+    if (title && bodyText && ![bodyText isEqualToString:NSLocalizedString(@"tap to edit body text",nil)]) {
+        WizDocument* doc = [[[WizDocument alloc] init] autorelease];
+        doc.strGuid = [WizGlobals genGUID];
+        doc.strTitle  = title;
+        doc.nLocalChanged = WizEditDocumentTypeAllChanged;
+        doc.bServerChanged = NO;
+//        doc.strLocation = self.kbGuid;
+        NSDictionary* docDic = [doc getModelDictionary];
+        bodyText = [self htmlString:bodyText title:title];
+        NSString* indexFilePath = [[WizFileManager shareManager]getDocumentFilePath:DocumentFileIndexName documentGUID:doc.strGuid accountUserId:self.accountUserId];
+        NSString* moblieFilePath = [[WizFileManager shareManager] getDocumentFilePath:DocumentFileMobileName documentGUID:doc.strGuid accountUserId:self.accountUserId];
+        [bodyText writeToFile:indexFilePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        [bodyText writeToFile:moblieFilePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        id<WizMetaDataBaseDelegate> db = [[WizDbManager shareInstance] getMetaDataBaseForAccount:self.accountUserId kbGuid:self.kbGuid];
+        [db updateDocument:docDic];
+        [[WizSyncCenter defaultCenter] uploadDocument:doc kbguid:self.kbGuid accountUserId:self.accountUserId];
+    }
 }
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -62,11 +68,12 @@
     return self;
 }
 
+
 - (void) dealloc
 {
     [self saveTheDocument];
     [backgroundView release];
-    [titilView release];
+    [titleView release];
     [contentView release];
     [lineView release];
     [super dealloc];
@@ -93,7 +100,7 @@
     navBar.barItem.leftBarButtonItem = backTo;
     navBar.barItem.rightBarButtonItem = noteInfo;
     
-    backgroundView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, endX, endY-44)];
+    backgroundView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 44, endX, endY-44)];
     backgroundView.indicatorStyle = UIScrollViewIndicatorStyleBlack;
     backgroundView.scrollEnabled = YES;
     backgroundView.delegate = self;
@@ -104,26 +111,27 @@
     backgroundView.backgroundColor = [UIColor clearColor];
 
     
-    titilView = [[UITextField alloc]initWithFrame:CGRectMake(10, 44, endX - 20, 40)];
-    titilView.font = [UIFont boldSystemFontOfSize:20];
-    titilView.delegate = self;
-    titilView.borderStyle = UITextBorderStyleNone;
-    titilView.textAlignment = UITextAlignmentLeft;
-    titilView.placeholder =  NSLocalizedString(@"NoteTitle",nil);
-    titilView.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    [backgroundView addSubview:titilView];
+    titleView = [[UITextField alloc]initWithFrame:CGRectMake(10, 0, endX - 20, 40)];
+    titleView.font = [UIFont boldSystemFontOfSize:20];
+    titleView.delegate = self;
+    titleView.borderStyle = UITextBorderStyleNone;
+    titleView.textAlignment = UITextAlignmentLeft;
+    titleView.placeholder =  NSLocalizedString(@"NoteTitle",nil);
+    titleView.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    [backgroundView addSubview:titleView];
     
-    lineView = [[UIImageView alloc]initWithFrame:CGRectMake(10, 84, endX - 20, 2)];
+    lineView = [[UIImageView alloc]initWithFrame:CGRectMake(10, 40, endX - 20, 2)];
     lineView.image = [UIImage imageNamed:@"separatline"];
     [backgroundView addSubview:lineView];
     
-    contentView = [[UITextView alloc]initWithFrame:CGRectMake(3, 86, endX, endY - 86)];
+    contentView = [[UITextView alloc]initWithFrame:CGRectMake(3, 42, endX, endY - 45)];
     contentView.font = [UIFont systemFontOfSize:15];
     contentView.textColor = [UIColor lightGrayColor];
+    contentView.scrollEnabled = YES;
     contentView.delegate = self;
     contentView.textAlignment = UITextAlignmentLeft;
     contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    contentView.text =  NSLocalizedString(@"tap to edit body text",nil);
+    contentView.text = NSLocalizedString(@"tap to edit body text",nil);
     [backgroundView addSubview:contentView];
     [self.view addSubview:backgroundView];
     [self.view addSubview:navBar];
@@ -141,7 +149,6 @@
 
 - (void) viewWillAppear:(BOOL)animated
 {
-    
 }
 
 
@@ -154,6 +161,7 @@
     CGRect keyboardRect = [aValue CGRectValue];
     keyboardBack_btn.hidden = NO;
     keyboardBack_btn.frame = CGRectMake(endX - 45, endY - keyboardRect.size.height - 37, 37, 37);
+    contentView.frame = CGRectMake(10, 45, contentView.contentSize.width, endY - keyboardRect.size.height-45);
 }
 
 - (void)keyboardWillHidden:(NSNotification *)notification
@@ -162,18 +170,21 @@
         contentView.textColor = [UIColor lightGrayColor];
         contentView.text = NSLocalizedString(@"tap to edit body text",nil);
     }
+    contentView.frame = CGRectMake(10, 45, contentView.contentSize.width, self.view.frame.size.height - 45);
+    [backgroundView scrollRectToVisible:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) animated:YES];
+    keyboardBack_btn.hidden = YES;
 }
 
 - (void) keyboardHidden
 {
-    [titilView resignFirstResponder];
+    [titleView resignFirstResponder];
     [contentView resignFirstResponder];
-    [backgroundView scrollRectToVisible:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) animated:YES];
-    keyboardBack_btn.hidden = YES;
 }
+
 - (void) showInfo
 {
     WGChooseFolderViewController* chooseVC = [[WGChooseFolderViewController alloc]init];
+    chooseVC.delegate = self;
     chooseVC.kbGuid = self.kbGuid;
     chooseVC.accountUserId = self.accountUserId;
     [self presentModalViewController:chooseVC animated:YES];
@@ -182,8 +193,17 @@
 
 - (void) backTo
 {
-    [titilView resignFirstResponder];
+    [titleView resignFirstResponder];
     [contentView resignFirstResponder];
+    [self dismissModalViewControllerAnimated:YES];
+}
+
+- (void) didFinishChoose:(WGChooseFolderViewController *)controller
+{
+    if (controller.listKeyStr && [controller.listKeyStr length] != 0)
+    {
+         self.kbGuid = [NSString stringWithString:controller.listKeyStr];
+    }
     [self dismissModalViewControllerAnimated:YES];
 }
 
@@ -194,6 +214,7 @@
 }
 
 #pragma textViewDelegate
+
 - (BOOL)textViewShouldBeginEditing:(UITextView *)textView
 {
     if (textView != contentView) {
@@ -211,14 +232,5 @@
         [backgroundView scrollRectToVisible:CGRectMake(0, 44, 320, self.view.frame.size.height + 300) animated:YES];
     }
 }
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range
- replacementText:(NSString *)text {
-    
-    if (textView == contentView && textView.contentSize.height > 150) {
-        CGRect frame = CGRectMake(0, - textView.contentSize.height + 100, self.view.frame.size.width, self.view.frame.size.height);
-        [backgroundView scrollRectToVisible:frame animated:YES];
-        return YES;
-    }
-    return YES;
-}
+
 @end

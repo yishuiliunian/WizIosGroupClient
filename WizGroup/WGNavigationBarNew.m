@@ -36,6 +36,7 @@
 
 - (void)drawRect:(CGRect)rect
 {
+//    [self setBackgroundImage:[UIImage imageNamed:@"app_nuvigationbar_baackground"] forBarMetrics:UIBarMetricsLandscapePhone];
     UIImage* image = [UIImage imageNamed:@"app_nuvigationbar_baackground"];
     self.titleLabel.frame = CGRectMake(0.0, 0.0, self.frame.size.width, self.frame.size.height);
     [image drawInRect:CGRectMake(0.0, 0.0, self.frame.size.width, self.frame.size.height)];
