@@ -12,9 +12,10 @@
 @interface WGChooseFolderViewController : UITableViewController{
     id <WGChooseFolderViewControllerDelegate> delegate;
 }
-@property (nonatomic, retain) id <WGChooseFolderViewControllerDelegate> delegate;
+@property (nonatomic, assign) id <WGChooseFolderViewControllerDelegate> delegate;
 @property (nonatomic, retain) NSString* kbGuid;
 @property (nonatomic, retain) NSString* accountUserId;
+@property (nonatomic, retain) NSString* docGuid;
 @property (nonatomic, retain) NSString* listKeyStr;
 @property (nonatomic, assign) NSInteger listType;
 

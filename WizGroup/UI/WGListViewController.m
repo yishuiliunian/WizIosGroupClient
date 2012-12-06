@@ -206,7 +206,7 @@
     WGCreateNoteViewController* editCommentVC = [[WGCreateNoteViewController alloc]init];
     editCommentVC.kbGuid = self.kbGuid;
     editCommentVC.accountUserId = self.accountUserId;
-    [self.navigationController presentModalViewController:editCommentVC animated:YES];
+    [self presentModalViewController:editCommentVC animated:YES];
     [editCommentVC release];
 }
 - (void) feedbackCenter
@@ -217,7 +217,7 @@
     feedbackVC.delegate = self;
     feedbackVC.modalPresentationStyle = UIModalPresentationFullScreen;
 	feedbackVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    [self.navigationController presentModalViewController:feedbackVC animated:YES];
+    [self presentModalViewController:feedbackVC animated:YES];
     [feedbackVC release];
 }
 
@@ -293,7 +293,6 @@
     UIBarButtonItem* showLeftItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"doc_list_tocategory"] hightedImage:nil target:self selector:@selector(showLeftController)];
     
     self.navigationItem.leftBarButtonItem = showLeftItem;
-
 }
 
 

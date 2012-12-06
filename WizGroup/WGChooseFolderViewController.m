@@ -16,6 +16,7 @@
 #import "WGNavigationBar.h"
 #import "WGBarButtonItem.h"
 
+
 enum WGFolderListIndex {
     WGFolderListIndexOfCustom = 0,
     WGFolderListIndexOfUserTree = 1
@@ -34,6 +35,7 @@ enum WGFolderListIndex {
 @synthesize delegate;
 @synthesize kbGuid;
 @synthesize accountUserId;
+@synthesize docGuid;
 @synthesize listType;
 @synthesize listKeyStr;
 
@@ -42,8 +44,6 @@ enum WGFolderListIndex {
 {
     [allNodes release];
     [rootTreeNode release];
-//    [kbGuid release];
-//    [accountUserId release];
     [super dealloc];
 }
 
@@ -157,6 +157,16 @@ enum WGFolderListIndex {
     self.tableView.backgroundColor = WGDetailCellBackgroudColor;
 }
 
+- (void) viewWillAppear:(BOOL)animated
+{
+    if (docGuid && ![docGuid isEqualToString:@""]) {
+        listKeyStr = docGuid;
+    }else{
+        listType = 3;
+    }
+    [super viewWillAppear:animated];
+}
+
 - (void) loadNavigation
 {
     WGNavigationBar* navBar = [[WGNavigationBar alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
@@ -171,17 +181,18 @@ enum WGFolderListIndex {
 
 - (void) saveAndBack
 {
+    self.docGuid = listKeyStr;
+    NSLog(@"docGuid:%@",docGuid);
     [self.delegate didFinishChoose:self];
+    
 }
+
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     return 0;
 }
-- (void) viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-}
+
 - (void)viewDidUnload
 {
     [super viewDidUnload];
@@ -190,10 +201,6 @@ enum WGFolderListIndex {
     // e.g. self.myOutlet = nil;
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
-
-}
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {

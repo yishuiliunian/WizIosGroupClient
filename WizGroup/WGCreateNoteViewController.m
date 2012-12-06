@@ -20,11 +20,13 @@
 @implementation WGCreateNoteViewController
 @synthesize kbGuid;
 @synthesize accountUserId;
+@synthesize docGuid;
 @synthesize backgroundView;
 @synthesize titleView;
 @synthesize contentView;
 @synthesize lineView;
 @synthesize keyboardBack_btn;
+
 - (NSString*) titleHtmlString:(NSString*)_titleText
 {
     return [NSString stringWithFormat:@"<title>%@</title>",_titleText];
@@ -38,8 +40,8 @@
 {
     NSString* title = self.titleView.text;
     NSString* bodyText = self.contentView.text;
-    if (!title || [title isEqualToString:@""]) {
-        title = NSLocalizedString(@"No Title", nil);
+    if (title == nil || [title isEqualToString:@""]) {
+        title = [NSString stringWithString:NSLocalizedString(@"No Title", nil)];
     }
     if (title && bodyText && ![bodyText isEqualToString:NSLocalizedString(@"tap to edit body text",nil)]) {
         WizDocument* doc = [[[WizDocument alloc] init] autorelease];
@@ -47,7 +49,11 @@
         doc.strTitle  = title;
         doc.nLocalChanged = WizEditDocumentTypeAllChanged;
         doc.bServerChanged = NO;
-//        doc.strLocation = self.kbGuid;
+        
+        doc.strTagGuids = self.docGuid;
+        NSLog(@"strTagGuids: %@ ",doc.strTagGuids);
+//        [self updatePrivate];
+        
         NSDictionary* docDic = [doc getModelDictionary];
         bodyText = [self htmlString:bodyText title:title];
         NSString* indexFilePath = [[WizFileManager shareManager]getDocumentFilePath:DocumentFileIndexName documentGUID:doc.strGuid accountUserId:self.accountUserId];
@@ -68,10 +74,20 @@
     return self;
 }
 
+- (void) updatePrivate
+{
+    id <WizSettingsDbDelegate> setting = [[WizDbManager shareInstance] getGlobalSettingDb];
+    [setting updatePrivateGroup:self.kbGuid accountUserId:self.accountUserId];
+}
 
+- (void) viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+}
 - (void) dealloc
 {
-    [self saveTheDocument];
+//    [self saveTheDocument];
+    [docGuid release];
     [backgroundView release];
     [titleView release];
     [contentView release];
@@ -87,8 +103,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardDidShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillHidden:) name:UIKeyboardDidHideNotification object:nil];
+    
+    self.docGuid = [[NSString alloc]init];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillHidden:) name:UIKeyboardWillHideNotification object:nil];
     
     CGSize size = self.view.frame.size;
     float endX = size.width;
@@ -147,10 +166,6 @@
 
 }
 
-- (void) viewWillAppear:(BOOL)animated
-{
-}
-
 
 - (void)keyboardWillShow:(NSNotification *)notification {
     CGSize size = self.view.frame.size;
@@ -186,24 +201,25 @@
     WGChooseFolderViewController* chooseVC = [[WGChooseFolderViewController alloc]init];
     chooseVC.delegate = self;
     chooseVC.kbGuid = self.kbGuid;
+    chooseVC.docGuid = self.docGuid;
     chooseVC.accountUserId = self.accountUserId;
     [self presentModalViewController:chooseVC animated:YES];
     [chooseVC release];
 }
-
+- (void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+}
 - (void) backTo
 {
-    [titleView resignFirstResponder];
-    [contentView resignFirstResponder];
+    [self keyboardHidden];
+    [self saveTheDocument];
     [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void) didFinishChoose:(WGChooseFolderViewController *)controller
 {
-    if (controller.listKeyStr && [controller.listKeyStr length] != 0)
-    {
-         self.kbGuid = [NSString stringWithString:controller.listKeyStr];
-    }
+    self.docGuid = controller.docGuid;
     [self dismissModalViewControllerAnimated:YES];
 }
 
