@@ -25,6 +25,7 @@
 #else
 #endif
 
+static const char* WizGlobalPersonalKbguid = "WizGlobalPersonalKbguidKKKKKKKKKKKLLLLLL";
 
 #define MaxDownloadProcessCount 10
 // wiz-dzpqzb test
@@ -95,6 +96,7 @@ void logTofile(char*sourceFile, char*functionName ,int lineNumber,NSString* form
 
 +(NSString*)fileMD5:(NSString*)path;
 + (NSURL*) wizServerUrl;
++ (const char*) wizServerUrlStdString;
 + (void) reportMemory;
 + (BOOL) checkAttachmentTypeIsAudio:(NSString*) attachmentType;
 + (BOOL) checkAttachmentTypeIsImage:(NSString *)attachmentType;
@@ -121,6 +123,7 @@ void logTofile(char*sourceFile, char*functionName ,int lineNumber,NSString* form
 + (NSString*) md5:(NSData *)input;
 + (NSString*) encryptPassword:(NSString*)password;
 + (BOOL) checkPasswordIsEncrypt:(NSString*)password;
++ (NSString*) ensurePasswordIsEncrypt:(NSString*)password;
 //
 + (UIView*) noNotesRemind;
 + (UIView*) noNotesRemindFor:(NSString*)string;

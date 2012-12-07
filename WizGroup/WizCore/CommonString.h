@@ -119,12 +119,4 @@
 //
 #define WizStrSyncOnlgByWifi           NSLocalizedString(@"Sync Only By WIFI",nil) 
 
-//
-#define WizFeedBack NSLocalizedString(@"FeedBack",nil)
-#define WizFeedBackHistory NSLocalizedString(@"History",nil)
-
-//
-#define WizStrTapToEdit         NSLocalizedString(@"tap to edit body text",nil)
-#define WizStrNoteTitle         NSLocalizedString(@"NoteTitle",nil)
-
 NSString* getTagDisplayName(NSString* tagName);

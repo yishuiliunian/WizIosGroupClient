@@ -75,6 +75,10 @@
 }
 
 #pragma mark -
++ (NSData*) sendSynchronousRequest:(XMLRPCRequest*)request returningResponse:(NSURLResponse**)response error:(NSError**)error
+{
+    return [NSURLConnection sendSynchronousRequest:[request request] returningResponse:response error:error];
+}
 
 + (XMLRPCConnection*)sendAsynchronousXMLRPCRequest: (XMLRPCRequest *)request delegate: (id) delegate;
 {

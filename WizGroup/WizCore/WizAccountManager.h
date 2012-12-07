@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "WizModuleTransfer.h"
 #define WGDefaultAccountUserId      getDefaultAccountUserId()
 #define WGDefaultAccountPassword    getDefaultAccountPassword()
 
@@ -21,7 +22,7 @@ NSString* getDefaultAccountUserId();
 - (BOOL)                canFindAccount: (NSString*)userId;
 - (NSString*)           accountPasswordByUserId:(NSString *)userID;
 //
-- (BOOL)                registerActiveAccount:(NSString*)userId;
+- (void)                registerActiveAccount:(NSString*)userId;
 - (void)                resignAccount;
 - (NSString*)           activeAccountUserId;
 - (void)                updateAccount:(NSString*)userId password:(NSString*)passwrod;
@@ -31,6 +32,8 @@ NSString* getDefaultAccountUserId();
 - (void)                resignActiveGroup;
 - (NSString*)           activeGroupGuid;
 //
-- (NSArray*)    groupsForAccount:(NSString*)accountUserId;
-- (WizGroup*) groupForKbguid:(NSString*)kbguid accountUserId:(NSString*)userId;
+- (void) updateGroup:(WizModule::CWizGroupArray&)groups forAccount:(NSString*)userId;
+- (WizModule::CWizGroupArray) groupsForAccount:(NSString*)accountUserId;
+- (std::string) CAccountPasswordByUserId:(const std::string&)userID;
+
 @end

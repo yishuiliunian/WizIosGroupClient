@@ -7,9 +7,6 @@
 //
 
 #import "WGGlobalCache.h"
-#import "WizDbManager.h"
-
-#import "WizDbManager.h"
 #import "WizFileManager.h"
 
 #define WGLockHaveData      1

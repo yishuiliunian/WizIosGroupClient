@@ -31,8 +31,6 @@
 		<string>blob</string>
 		<key>DT_MODIFIED</key>
 		<string>char(19)</string>
-		<key>GROUP_KBGUID</key>
-		<string>char(36)</string>
 		<key>PRIMARAY_KEY</key>
 		<string>ABSTRACT_GUID</string>
 	</dict>

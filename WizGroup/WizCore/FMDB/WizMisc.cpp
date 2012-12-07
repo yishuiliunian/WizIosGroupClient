@@ -20,6 +20,9 @@ extern"C" bool IsEmptyString(const char* lpszStr)
 		return true;
 	if (!*lpszStr)
 		return true;
+    if (std::string(lpszStr) == "") {
+        return true;
+    }
 	return false;
 }
 

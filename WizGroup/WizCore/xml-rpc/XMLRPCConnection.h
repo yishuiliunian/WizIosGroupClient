@@ -50,7 +50,7 @@
 #pragma mark -
 
 + (XMLRPCConnection*)sendAsynchronousXMLRPCRequest: (XMLRPCRequest *)req delegate: (id) callback;
-
++ (NSData*) sendSynchronousRequest:(XMLRPCRequest*)request returningResponse:(NSURLResponse**)response error:(NSError**)error;
 #pragma mark -
 
 - (void)cancel;

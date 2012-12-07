@@ -393,16 +393,45 @@ static NSArray* htmlArray;
 {
     return [WizGlobals checkAttachmentTypeInTypeArray:type typeArray:[WizGlobals excelArray]];
 }
++ (NSString*) wizDeviceName
+{
+    if (WizDeviceIsPad()) {
+        return @"iphone";
+    }
+    else
+    {
+        return @"ios";
+    }
+}
++ (NSString*) wizSoftName
+{
+    return @"ios";
+}
 
 + (NSURL*) wizServerUrl
 {
-//    return [[NSURL alloc] initWithString:@"http://192.168.79.1:8800/wiz/xmlrpc"];
+    BOOL isDebug = [[NSUserDefaults standardUserDefaults] boolForKey:@"debug"];
+    
+    
+    NSString* version = [WizGlobals wizNoteVersion];
+    NSString* plat = [WizGlobals wizSoftName];
+    NSString* debug = isDebug ? @"true" : @"false";
+    NSString* strUrl = [NSString stringWithFormat:@"http://api.wiz.cn/?p=wiz&v=%@&c=sync_http&plat=%@&debug=%@",version, plat, debug];
+    NSURL* url = [NSURL URLWithString:strUrl];
+    NSURLRequest* request = [NSURLRequest requestWithURL:url];
+    NSData* data =  [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+//    return [[NSURL alloc] initWithString:@"http://42.121.35.107:8080/wizas/xmlrpc"];
 //    NSString* url = [[WizSettings defaultSettings] wizServerUrl];
 //    NSLog(@"url %@",url);
 //    return [[[NSURL alloc] initWithString:url] autorelease];
-//    return [[[NSURL alloc] initWithString:@"http://service.wiz.cn/wizkm/xmlrpc"] autorelease];
-    return [[[NSURL alloc] initWithString:@"http://192.168.1.155:8800/wiz/xmlrpc"] autorelease];
+    return [[[NSURL alloc] initWithString:@"http://service.wiz.cn/wizkm/xmlrpc"] autorelease];
+//    return [[[NSURL alloc] initWithString:@"http://192.168.1.155:8800/wiz/xmlrpc"] autorelease];
 //    return [[NSURL alloc] initWithString:@"http://110.75.189.20:8080/wiz/xmlrpc"];
+}
+
++ (const char *) wizServerUrlStdString
+{
+    return "http://service.wiz.cn/wizkm/xmlrpc";
 }
 +(void) showAlertView:(NSString*)title message:(NSString*)message delegate: (id)callback retView:(UIAlertView**) pAlertView
 {
@@ -487,6 +516,16 @@ static NSArray* htmlArray;
     }
     else {
         return NO;
+    }
+}
++ (NSString*) ensurePasswordIsEncrypt:(NSString*)password
+{
+    if ([WizGlobals checkPasswordIsEncrypt:password]) {
+        return password;
+    }
+    else
+    {
+        return [WizGlobals encryptPassword:password];
     }
 }
 + (UIImage *)resizeImage:(UIImage *)image
