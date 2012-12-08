@@ -7,7 +7,6 @@
 //
 
 #import "WGDetailListCell.h"
-#import "WizDbManager.h"
 #import "WGGlobalCache.h"
 #import "WizNotificationCenter.h"
 typedef enum WGDetailListCellLayoutType
@@ -101,67 +100,67 @@ static UIFont* timeFont = nil;
 
 - (void) doReloadUI
 {
-    id<WizMetaDataBaseDelegate> metaDb = [[WizDbManager shareInstance] getMetaDataBaseForAccount:self.accountUserId kbGuid:self.kbGuid];
-    WizDocument* doc = [metaDb documentFromGUID:self.documentGuid];
-
-    WizAbstract* abstract = [WGGlobalCache abstractForDoc:self.documentGuid kbguid:self.kbGuid accountUserId:self.accountUserId];
-    
-    static float startX = 10;
-    static float startY = 10;
-    CGSize cellSize = self.contentView.frame.size;
-    float endX = cellSize.width - 20;
-    //
-    float imageWidth = 0;
-    float imageHeight = 0;
-    float imageStartX = cellSize.width - 10 - cellSize.height;
-    if (abstract && abstract.uiImage) {
-        imageWidth = cellSize.height - 20;
-        imageHeight = cellSize.height - 20;
-        endX = cellSize.width - 10 - imageWidth;
-        imageStartX = endX;
-    }
-    //
-    float titleWidth = endX - startX;
-    float titleHeight = 20;
-    //
-    float timeWidth = 80 - startX;
-    float timeHeight = 15;
-    //
-    float authorWidth = 80;
-    float authorStartx = endX - authorWidth;
-    float authorHeight = 15;
-    //
-    float detaiWidth = titleWidth;
-    float detailHeight = 50;
-    //
-    CGRect titleRect = CGRectMake(startX, startY, titleWidth , titleHeight);
-
-    CGRect detailRect = CGRectMake(startX, titleHeight + startY + 3, detaiWidth, detailHeight);
-    
-    CGRect timeRect = CGRectMake(startX, titleHeight + detailHeight + startY + 6, timeWidth, timeHeight);
-    CGRect authorRect = CGRectMake(authorStartx, titleHeight + detailHeight + startX + 6, authorWidth, authorHeight);
-    CGRect imageRect = CGRectMake(imageStartX, startY , imageWidth, imageHeight);
-    NSString* authorStr = doc.strOwner;
-    if (authorStr) {
-        NSInteger indexOf = [authorStr indexOf:@"@"];
-        if (indexOf != NSNotFound) {
-            authorStr = [authorStr substringToIndex:indexOf];
-        }
-    }
-    titleLabel.frame = titleRect;
-    titleLabel.text = doc.strTitle;
-    //
-    timeLabel.frame = timeRect;
-    timeLabel.text = [doc.dateModified stringLocal];
-    //
-    abstractLabel.frame = detailRect;
-    abstractLabel.text = abstract.strText;
-    //
-    authorLabel.frame = authorRect;
-    authorLabel.text = authorStr;
-    //
-    abstractImageView.frame = imageRect;
-    abstractImageView.image = abstract.uiImage;
+//    id<WizMetaDataBaseDelegate> metaDb = [[WizDbManager shareInstance] getMetaDataBaseForAccount:self.accountUserId kbGuid:self.kbGuid];
+//    WizDocument* doc = [metaDb documentFromGUID:self.documentGuid];
+//
+//    WizAbstract* abstract = [WGGlobalCache abstractForDoc:self.documentGuid kbguid:self.kbGuid accountUserId:self.accountUserId];
+//    
+//    static float startX = 10;
+//    static float startY = 10;
+//    CGSize cellSize = self.contentView.frame.size;
+//    float endX = cellSize.width - 20;
+//    //
+//    float imageWidth = 0;
+//    float imageHeight = 0;
+//    float imageStartX = cellSize.width - 10 - cellSize.height;
+//    if (abstract && abstract.uiImage) {
+//        imageWidth = cellSize.height - 20;
+//        imageHeight = cellSize.height - 20;
+//        endX = cellSize.width - 10 - imageWidth;
+//        imageStartX = endX;
+//    }
+//    //
+//    float titleWidth = endX - startX;
+//    float titleHeight = 20;
+//    //
+//    float timeWidth = 80 - startX;
+//    float timeHeight = 15;
+//    //
+//    float authorWidth = 80;
+//    float authorStartx = endX - authorWidth;
+//    float authorHeight = 15;
+//    //
+//    float detaiWidth = titleWidth;
+//    float detailHeight = 50;
+//    //
+//    CGRect titleRect = CGRectMake(startX, startY, titleWidth , titleHeight);
+//
+//    CGRect detailRect = CGRectMake(startX, titleHeight + startY + 3, detaiWidth, detailHeight);
+//    
+//    CGRect timeRect = CGRectMake(startX, titleHeight + detailHeight + startY + 6, timeWidth, timeHeight);
+//    CGRect authorRect = CGRectMake(authorStartx, titleHeight + detailHeight + startX + 6, authorWidth, authorHeight);
+//    CGRect imageRect = CGRectMake(imageStartX, startY , imageWidth, imageHeight);
+//    NSString* authorStr = doc.strOwner;
+//    if (authorStr) {
+//        NSInteger indexOf = [authorStr indexOf:@"@"];
+//        if (indexOf != NSNotFound) {
+//            authorStr = [authorStr substringToIndex:indexOf];
+//        }
+//    }
+//    titleLabel.frame = titleRect;
+//    titleLabel.text = doc.strTitle;
+//    //
+//    timeLabel.frame = timeRect;
+//    timeLabel.text = [doc.dateModified stringLocal];
+//    //
+//    abstractLabel.frame = detailRect;
+//    abstractLabel.text = abstract.strText;
+//    //
+//    authorLabel.frame = authorRect;
+//    authorLabel.text = authorStr;
+//    //
+//    abstractImageView.frame = imageRect;
+//    abstractImageView.image = abstract.uiImage;
 }
 
 - (void) drawRect:(CGRect)rect

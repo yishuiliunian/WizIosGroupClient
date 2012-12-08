@@ -7,7 +7,6 @@
 //
 
 #import "WGFeedBackCell.h"
-#import "WizDbManager.h"
 #import "WGGlobalCache.h"
 #import "WizNotificationCenter.h"
 

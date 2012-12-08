@@ -9,7 +9,6 @@
 #import "WGListViewController.h"
 #import "PPRevealSideViewController.h"
 #import <QuartzCore/QuartzCore.h>
-#import "WizDbManager.h"
 #import "WGReadViewController.h"
 #import "WGNavigationBar.h"
 #import "WizGroup.h"
@@ -18,6 +17,7 @@
 #import "WGBarButtonItem.h"
 #import "WGToolBar.h"
 #import "WGNavigationViewController.h"
+#import "WizFileManager.h"
 
 #import "EGORefreshTableHeaderView.h"
 #import "WizSyncCenter.h"
@@ -25,17 +25,18 @@
 #import "WizNotificationCenter.h"
 #import "WGFeedBackViewController.h"
 #import "WGCreateNoteViewController.h"
-
-
+#import "WizModuleTransfer.h"
+#import "WizMetaDb.h"
+using namespace WizModule;
 //
-#import "WizApiSearch.h"
 #import "MBProgressHUD.h"
+
 
 @interface WGListViewController () <WGReadListDelegate,
                                     EGORefreshTableHeaderDelegate,
-                                    UISearchBarDelegate,UISearchDisplayDelegate,WizSearchDelegate>
+                                    UISearchBarDelegate,UISearchDisplayDelegate>
 {
-    NSMutableArray* documentsArray;
+    CWizDocumentsGroups documentsArray;
     BOOL    isRefreshing;
 }
 @property (nonatomic, retain) NSIndexPath* lastIndexPath;
@@ -73,117 +74,97 @@
     [kbGroup release];
     [listKey release];
     [lastIndexPath release];
-    [documentsArray release];
-    [kbGuid release];
-    [accountUserId release];
     [super dealloc];
 }
-
+//
 - (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if ([keyPath isEqualToString:@"listKey"]) {
         [self reloadAllData];
     }
 }
-
+//
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
     if (self) {
         [self addObserver:self forKeyPath:@"listKey" options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew  context:nil];
-        documentsArray = [[NSMutableArray alloc] init];
         isRefreshing = NO;
         //
         searchHistoryArray = [[NSMutableArray alloc] init];
-        [[WizNotificationCenter defaultCenter] addObserver:self selector:@selector(startRefreshingGroup:) name:WizNMSyncGroupStart object:nil
-         ];
-        [[WizNotificationCenter defaultCenter] addObserver:self selector:@selector(endRefreshGroup:) name:WizNMSyncGroupEnd object:nil];
-        [[WizNotificationCenter defaultCenter] addObserver:self selector:@selector(endRefreshGroup:) name:WizNMSyncGroupError object:nil];
     }
     return self;
 }
 - (void) startRefreshingGroup:(NSNotification*)nc
 {
-    NSString* guid = [WizNotificationCenter getGuidFromNc:nc];
-    if ([self.kbGuid isEqualToString:guid]) {
-        isRefreshing = YES;
-        [self.pullToRefreshView startLoadingAnimation:self.tableView];
-    }
+   
     
 }
 
 - (void) endRefreshGroup:(NSNotification*)nc
 {
-    NSString* guid = [WizNotificationCenter getGuidFromNc:nc];
-    if ([self.kbGuid isEqualToString:guid]) {
-        isRefreshing = NO;
-        [self.pullToRefreshView egoRefreshScrollViewDataSourceDidFinishedLoading:self.tableView];
-        [self reloadAllData];
-    }
+//    NSString* guid = [WizNotificationCenter getGuidFromNc:nc];
+//    if ([self.kbGuid isEqualToString:guid]) {
+//        isRefreshing = NO;
+//        [self.pullToRefreshView egoRefreshScrollViewDataSourceDidFinishedLoading:self.tableView];
+//        [self reloadAllData];
+//    }
 }
-
-- (void) loadRecentsDocument
+//
+- (std::string) getMetaDbPath
 {
-    id<WizMetaDataBaseDelegate> db = [[WizDbManager shareInstance] getMetaDataBaseForAccount:self.accountUserId kbGuid:self.kbGuid];
-    [documentsArray addObjectsFromArray:[db recentDocuments]];
-    
+    return CWizFileManager::shareInstance()->metaDatabasePath(self.kbGuid.c_str(), self.accountUserId.c_str());
+}
+- (void) loadRecentsDocument:(CWizDocumentDataArray&)array
+{
+    WizMetaDb metaDb([self getMetaDbPath].c_str());
+    if (!metaDb.recentDocuments(array)) {
+        return;
+    }
     self.title = [NSString stringWithFormat:@"%@(%@)",self.kbGroup.kbName, NSLocalizedString(@"Recent", nil)];
 }
 
-- (void) loadTagDocument
+- (void) loadTagDocument:(CWizDocumentDataArray&)array
 {
-    id<WizMetaDataBaseDelegate> db = [[WizDbManager shareInstance] getMetaDataBaseForAccount:self.accountUserId kbGuid:self.kbGuid];
-    [documentsArray addObjectsFromArray:[db documentsByTag:self.listKey]];
-    
-    WizTag* tag = [db tagFromGuid:self.listKey];
-    self.title = getTagDisplayName(tag.strTitle);
 }
 
 - (void) loadUnreadDocument
 {
-    id<WizMetaDataBaseDelegate> db = [[WizDbManager shareInstance] getMetaDataBaseForAccount:self.accountUserId kbGuid:self.kbGuid];
-    [documentsArray addObjectsFromArray:[db unreadDocuments]];
-    
     self.title = WizStrUnreadNotes;
 }
 - (void) loadNotagDocuments
 {
-    id<WizMetaDataBaseDelegate> db = [[WizDbManager shareInstance] getMetaDataBaseForAccount:self.accountUserId kbGuid:self.kbGuid];
-    [documentsArray addObjectsFromArray:[db documentsByNotag]];
     self.title = self.kbGroup.kbName;
 }
 - (void) loadSearchDocuments
 {
-    [documentsArray addObjectsFromArray:self.searchedDocumentsArray];
 }
 - (void) reloadAllData
 {
-    [documentsArray removeAllObjects];
+    WizMetaDb metaDb([self getMetaDbPath].c_str());
+    CWizDocumentDataArray array;
     switch (listType) {
         case WGListTypeRecent:
-            [self loadRecentsDocument];
+            metaDb.recentDocuments(array);
             break;
         case WGListTypeTag:
-            [self loadTagDocument];
+            metaDb.documentsByTag(WizNSStringToCString(self.listKey), array);
             break;
         case WGListTypeUnread:
-            [self loadUnreadDocument];
             break;
         case WGListTypeNoTags:
-            [self loadNotagDocuments];
             break;
         case WGListTypeSearch:
-            [self loadSearchDocuments];
             break;
         default:
-            [self loadRecentsDocument];
             break;
     }
+    documentsArray.setDocuments(array, CWizDocumentsSortedTypeByTitle);
     [self.tableView reloadData];
 }
-
-
-
+//
+//
+//
 - (void) backToHome
 {
     CATransition *tran = [CATransition animation];
@@ -203,22 +184,22 @@
 }
 - (void) editComment
 {
-    WGCreateNoteViewController* editCommentVC = [[WGCreateNoteViewController alloc]init];
-    editCommentVC.kbGuid = self.kbGuid;
-    editCommentVC.accountUserId = self.accountUserId;
-    [self.navigationController presentModalViewController:editCommentVC animated:YES];
-    [editCommentVC release];
+//    WGCreateNoteViewController* editCommentVC = [[WGCreateNoteViewController alloc]init];
+//    editCommentVC.kbGuid = self.kbGuid;
+//    editCommentVC.accountUserId = self.accountUserId;
+//    [self.navigationController presentModalViewController:editCommentVC animated:YES];
+//    [editCommentVC release];
 }
 - (void) feedbackCenter
 {
-    WGFeedBackViewController* feedbackVC = [[WGFeedBackViewController alloc]init];
-    feedbackVC.kbGuid = self.kbGuid;
-    feedbackVC.accountUserId = self.accountUserId;
-    feedbackVC.delegate = self;
-    feedbackVC.modalPresentationStyle = UIModalPresentationFullScreen;
-	feedbackVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    [self.navigationController presentModalViewController:feedbackVC animated:YES];
-    [feedbackVC release];
+//    WGFeedBackViewController* feedbackVC = [[WGFeedBackViewController alloc]init];
+//    feedbackVC.kbGuid = self.kbGuid;
+//    feedbackVC.accountUserId = self.accountUserId;
+//    feedbackVC.delegate = self;
+//    feedbackVC.modalPresentationStyle = UIModalPresentationFullScreen;
+//	feedbackVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+//    [self.navigationController presentModalViewController:feedbackVC animated:YES];
+//    [feedbackVC release];
 }
 
 - (void)didfinishFeedBack:(WGFeedBackViewController *)controller
@@ -300,6 +281,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self reloadAllData];
     [self customizeNavBar];
     
     
@@ -323,7 +305,7 @@
     [self.tableView addSubview:self.pullToRefreshView];
     
     //
-    isRefreshing = [[WizSyncCenter defaultCenter]  isRefreshingGroup:self.kbGuid accountUserId:self.accountUserId];
+//    isRefreshing = [[WizSyncCenter defaultCenter]  isRefreshingGroup:self.kbGuid accountUserId:self.accountUserId];
     if (isRefreshing) {
         [self.pullToRefreshView startLoadingAnimation:self.tableView];
     }
@@ -364,7 +346,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if ([tableView isEqual:self.tableView]) {
-        NSInteger count = [documentsArray count];
+        NSInteger count = documentsArray.getDocumentCount(section);
         if (count) {
             tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
         }
@@ -389,9 +371,9 @@
     if (cell == nil) {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier]autorelease];
     }
-    WizSearch* search = [self.searchHistoryArray objectAtIndex:indexPath.row];
-    cell.textLabel.text = search.strKeyWords;
-    cell.detailTextLabel.text = [search.dateLastSearched stringLocal];
+//    WizSearch* search = [self.searchHistoryArray objectAtIndex:indexPath.row];
+//    cell.textLabel.text = search.strKeyWords;
+//    cell.detailTextLabel.text = [search.dateLastSearched stringLocal];
     return cell;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -406,13 +388,10 @@
     if (nil == cell) {
         cell = [[[WGDetailListCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
     }
-    if ([documentsArray count] == 0) {
-        return cell;
-    }
-    WizDocument* doc = [documentsArray objectAtIndex:indexPath.row];
-    cell.documentGuid = doc.strGuid;
-    cell.kbGuid = self.kbGuid;
-    cell.accountUserId = self.accountUserId;
+    WIZDOCUMENTDATA doc = documentsArray.getDocument(indexPath.section, indexPath.row);
+//    cell.documentGuid = doc.strGuid;
+//    cell.kbGuid = self.kbGuid;
+//    cell.accountUserId = self.accountUserId;
     return cell;
 }
 
@@ -451,65 +430,65 @@
 {
     if ([tableView isEqual:self.searchDisplayCon.searchResultsTableView]) {
         
-        WizSearch* search = [self.searchHistoryArray objectAtIndex:indexPath.row];
-        [self searchOnServer:search.strKeyWords];
+//        WizSearch* search = [self.searchHistoryArray objectAtIndex:indexPath.row];
+//        [self searchOnServer:search.strKeyWords];
         return;
     }
     //
-    self.lastIndexPath = indexPath;
-    WGReadViewController* readController = [[WGReadViewController alloc] init];
-    readController.kbguid = self.kbGuid;
-    readController.accountUserId = self.accountUserId;
-    readController.listDelegate = self;
-    
-    
-    [self.navigationController pushViewController:readController animated:YES];
-    self.revealSideViewController.panInteractionsWhenClosed = PPRevealSideInteractionNone;
-    [readController release];
+//    self.lastIndexPath = indexPath;
+//    WGReadViewController* readController = [[WGReadViewController alloc] init];
+//    readController.kbguid = self.kbGuid;
+//    readController.accountUserId = self.accountUserId;
+//    readController.listDelegate = self;
+//    
+//    
+//    [self.navigationController pushViewController:readController animated:YES];
+//    self.revealSideViewController.panInteractionsWhenClosed = PPRevealSideInteractionNone;
+//    [readController release];
 }
 // read deleagte
 
-- (WizDocument*) currentDocument
-{
-    if (self.lastIndexPath!= nil  && self.lastIndexPath.row < [documentsArray count]) {
-        return [documentsArray objectAtIndex:self.lastIndexPath.row];
-    }
-    return nil;
-}
-
-- (BOOL) shouldCheckNextDocument
-{
-    if (self.lastIndexPath != nil) {
-        if (self.lastIndexPath.row + 1 < [documentsArray count]) {
-            return YES;
-        }
-    }
-    return NO;
-}
-
-- (void) moveToNextDocument
-{
-    if ([self shouldCheckNextDocument]) {
-        self.lastIndexPath = [NSIndexPath indexPathForRow:self.lastIndexPath.row+1 inSection:0];
-    }
-}
-
-- (BOOL) shouldCheckPreDocument
-{
-    if (self.lastIndexPath != nil) {
-        if (self.lastIndexPath.row - 1 >= 0) {
-            return YES;
-        }
-    }
-    return NO;
-}
-
-- (void) moveToPreDocument
-{
-    if ([self shouldCheckPreDocument]) {
-        self.lastIndexPath = [NSIndexPath indexPathForRow:self.lastIndexPath.row -1 inSection:0];
-    }
-}
+//- (WizDocument*) currentDocument
+//{
+//    if (self.lastIndexPath!= nil  && self.lastIndexPath.row < [documentsArray count]) {
+//        return [documentsArray objectAtIndex:self.lastIndexPath.row];
+//    }
+//    return nil;
+//}
+//
+//- (BOOL) shouldCheckNextDocument
+//{
+//    if (self.lastIndexPath != nil) {
+//        if (self.lastIndexPath.row + 1 < [documentsArray count]) {
+//            return YES;
+//        }
+//    }
+//    return NO;
+//}
+//
+//- (void) moveToNextDocument
+//{
+//    if ([self shouldCheckNextDocument]) {
+//        self.lastIndexPath = [NSIndexPath indexPathForRow:self.lastIndexPath.row+1 inSection:0];
+//    }
+//}
+//
+//- (BOOL) shouldCheckPreDocument
+//{
+//    if (self.lastIndexPath != nil) {
+//        if (self.lastIndexPath.row - 1 >= 0) {
+//            return YES;
+//        }
+//    }
+//    return NO;
+//}
+//
+//- (void) moveToPreDocument
+//{
+//    if ([self shouldCheckPreDocument]) {
+//        self.lastIndexPath = [NSIndexPath indexPathForRow:self.lastIndexPath.row -1 inSection:0];
+//    }
+//}
 - (void) refreshGroupData
 {
     [[WizSyncCenter defaultCenter] refreshGroup:self.kbGuid accountUserId:self.accountUserId];
@@ -542,8 +521,7 @@
 
 - (NSDate*) egoRefreshTableHeaderDataSourceLastUpdated:(EGORefreshTableHeaderView *)view
 {
-    id<WizSettingsDbDelegate> db = [[WizDbManager shareInstance] getGlobalSettingDb];
-    return [db lastUpdateTimeForGroup:self.kbGuid accountUserId:self.accountUserId];
+//    return [db lastUpdateTimeForGroup:self.kbGuid accountUserId:self.accountUserId];
 }
 
 
@@ -551,20 +529,20 @@
 
 - (void) searchBar:(UISearchBar *)searchBar_ textDidChange:(NSString *)searchText
 {
-    id<WizTemporaryDataBaseDelegate> db = [[WizDbManager shareInstance] getGlobalCacheDb];
-    NSArray* array = [db allWizSearchsByKbguid:self.kbGuid accountUserId:self.accountUserId];
-    [self.searchHistoryArray removeAllObjects];
-    [self.searchHistoryArray addObjectsFromArray:array];
+//    id<WizTemporaryDataBaseDelegate> db = [[WizDbManager shareInstance] getGlobalCacheDb];
+//    NSArray* array = [db allWizSearchsByKbguid:self.kbGuid accountUserId:self.accountUserId];
+//    [self.searchHistoryArray removeAllObjects];
+//    [self.searchHistoryArray addObjectsFromArray:array];
 }
 
 - (void) searchOnServer:(NSString*)keyWords
 {
     [MBProgressHUD showHUDAddedTo:self.searchDisplayCon.searchResultsTableView animated:YES];
     self.searchKeyWords = keyWords;
-    WizApiSearch* search = [[[WizApiSearch alloc] initWithKbguid:self.kbGuid accountUserId:self.accountUserId apiDelegate:nil] autorelease];
-    search.delegate = self;
-    search.keyWords = keyWords;
-    [WizSyncCenter runWizApi:search inQueue:[NSOperationQueue wizDownloadQueue]];
+//    WizApiSearch* search = [[[WizApiSearch alloc] initWithKbguid:self.kbGuid accountUserId:self.accountUserId apiDelegate:nil] autorelease];
+//    search.delegate = self;
+//    search.keyWords = keyWords;
+//    [WizSyncCenter runWizApi:search inQueue:[NSOperationQueue wizDownloadQueue]];
  
 }
 
@@ -577,19 +555,19 @@
 {
     [MBProgressHUD hideAllHUDsForView:self.searchDisplayCon.searchResultsTableView animated:YES];
     
-    NSLog(@"search key words is %@",self.searchKeyWords);
-    
-    id<WizTemporaryDataBaseDelegate> db = [[WizDbManager shareInstance] getGlobalCacheDb];
-    [db updateWizSearch:self.searchKeyWords notesNumber:[array count] isSerchLocal:NO kbguid:self.kbGuid accountUserId:self.accountUserId];
-    //
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.searchedDocumentsArray = [NSMutableArray arrayWithArray:array];
-        self.listKey = @"";
-        self.listType = WGListTypeSearch;
-        [self reloadAllData];
-       [self.searchDisplayCon setActive:NO animated:YES]; 
-    });
+//    NSLog(@"search key words is %@",self.searchKeyWords);
+//    
+//    id<WizTemporaryDataBaseDelegate> db = [[WizDbManager shareInstance] getGlobalCacheDb];
+//    [db updateWizSearch:self.searchKeyWords notesNumber:[array count] isSerchLocal:NO kbguid:self.kbGuid accountUserId:self.accountUserId];
+//    //
+//
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        self.searchedDocumentsArray = [NSMutableArray arrayWithArray:array];
+//        self.listKey = @"";
+//        self.listType = WGListTypeSearch;
+//        [self reloadAllData];
+//       [self.searchDisplayCon setActive:NO animated:YES]; 
+//    });
     
 
 }

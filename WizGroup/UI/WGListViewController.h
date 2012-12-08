@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h> 
 #import "WGFeedBackViewController.h"
-
+#import <string>
 enum WGListType {
     WGListTypeRecent = 0,
     WGListTypeTag = 1,
@@ -21,8 +21,8 @@ enum WGListType {
 
 @interface WGListViewController : UITableViewController<WGFeedBackViewControllerDelegate>
 
-@property (nonatomic, retain) NSString* kbGuid;
-@property (nonatomic, retain) NSString* accountUserId;
+@property (nonatomic, assign) std::string kbGuid;
+@property (nonatomic, assign) std::string accountUserId;
 @property (nonatomic, assign) enum WGListType listType;
 @property (nonatomic, retain) NSString* listKey;
 @property (nonatomic, retain) WizGroup* kbGroup;

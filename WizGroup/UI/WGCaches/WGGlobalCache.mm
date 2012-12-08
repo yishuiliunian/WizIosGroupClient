@@ -134,99 +134,99 @@
 }
 - (BOOL) generateAbstractForDocument:(NSString*)documengGuid    accountUserId:(NSString*)accountUserId
 {
-    NSString* sourceFilePath = [[WizFileManager shareManager]
-                                getDocumentFilePath:DocumentFileIndexName
-                                documentGUID:documengGuid
-                                accountUserId:accountUserId];
-    
-    if (![[NSFileManager defaultManager] fileExistsAtPath:sourceFilePath]) {
-        return NO;
-    }
-    NSString* abstractText = nil;
-    if ([WizGlobals fileLength:sourceFilePath] < 1024*1024) {
-        
-        NSString* sourceStr = [NSString stringWithContentsOfFile:sourceFilePath
-                                                    usedEncoding:nil
-                                                           error:nil];
-        if (sourceStr.length > 1024*50) {
-            sourceStr = [sourceStr substringToIndex:1024*50];
-        }
-        NSString* destStr = [sourceStr htmlToText:200];
-        destStr = [destStr stringReplaceUseRegular:@"&(.*?);|\\s|/\n" withString:@""];
-        if (destStr == nil || [destStr isEqualToString:@""]) {
-            destStr = @"";
-        }
-        if (WizDeviceIsPad) {
-            NSRange range = NSMakeRange(0, 100);
-            if (destStr.length <= 100) {
-                range = NSMakeRange(0, destStr.length);
-            }
-            abstractText = [destStr substringWithRange:range];
-        }
-        else
-        {
-            NSRange range = NSMakeRange(0, 70);
-            if (destStr.length <= 70) {
-                range = NSMakeRange(0, destStr.length);
-            }
-            abstractText = [destStr substringWithRange:range];
-        }
-    }
-    else
-    {
-        NSLog(@"the file name is %@",sourceFilePath);
-    }
-    
-    
-    NSString* sourceImagePath = [[WizFileManager shareManager] documentIndexFilesPath:documengGuid accountUserId:accountUserId];
-    NSArray* imageFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:sourceImagePath  error:nil];
-    
-    NSString* maxImageFilePath = nil;
-    int maxImageSize = 0;
-    for (NSString* each in imageFiles) {
-        NSArray* typeArry = [each componentsSeparatedByString:@"."];
-        if ([WizGlobals checkAttachmentTypeIsImage:[typeArry lastObject]]) {
-            NSString* sourceImageFilePath = [sourceImagePath stringByAppendingPathComponent:each];
-            int fileSize = [WizGlobals fileLength:sourceFilePath];
-            if (fileSize > maxImageSize && fileSize < 1024*1024) {
-                maxImageFilePath = sourceImageFilePath;
-            }
-        }
-    }
-    UIImage* compassImage = nil;
-    
-    //
-    if (nil != maxImageFilePath) {
-        float compassWidth=140;
-        float compassHeight = 140;
-        UIImage* image = [[UIImage alloc] initWithContentsOfFile:maxImageFilePath];
-        
-        if (nil != image)
-        {
-            if (image.size.height >= compassHeight && image.size.width >= compassWidth) {
-                compassImage = [image wizCompressedImageWidth:compassWidth height:compassHeight];
-            }
-            [image release];
-        }
-    }
-    
-    NSData* imageData = nil;
-    if (nil != compassImage) {
-        imageData = [compassImage compressedData];
-    }
-    WizAbstract* abs = [[WizAbstract alloc] init];
-    abs.strText = abstractText;
-    abs.uiImage = compassImage;
-    id<WizTemporaryDataBaseDelegate> cacheDb = [[WizDbManager shareInstance] getGlobalCacheDb];
-    [self setObject:abs forKey:documengGuid];
-    
-    NSMutableDictionary* userInfo = [NSMutableDictionary dictionary];
-    [WizNotificationCenter addDocumentGuid:documengGuid toUserInfo:userInfo];
-    
-    [[WizNotificationCenter defaultCenter] postNotificationName:WizNMUIDidGenerateAbstract object:nil userInfo:userInfo];
-
-
-    return [cacheDb updateAbstract:abstractText imageData:imageData guid:documengGuid type:@"" kbguid:nil];
+//    NSString* sourceFilePath = [[WizFileManager shareManager]
+//                                getDocumentFilePath:DocumentFileIndexName
+//                                documentGUID:documengGuid
+//                                accountUserId:accountUserId];
+//    
+//    if (![[NSFileManager defaultManager] fileExistsAtPath:sourceFilePath]) {
+//        return NO;
+//    }
+//    NSString* abstractText = nil;
+//    if ([WizGlobals fileLength:sourceFilePath] < 1024*1024) {
+//        
+//        NSString* sourceStr = [NSString stringWithContentsOfFile:sourceFilePath
+//                                                    usedEncoding:nil
+//                                                           error:nil];
+//        if (sourceStr.length > 1024*50) {
+//            sourceStr = [sourceStr substringToIndex:1024*50];
+//        }
+//        NSString* destStr = [sourceStr htmlToText:200];
+//        destStr = [destStr stringReplaceUseRegular:@"&(.*?);|\\s|/\n" withString:@""];
+//        if (destStr == nil || [destStr isEqualToString:@""]) {
+//            destStr = @"";
+//        }
+//        if (WizDeviceIsPad) {
+//            NSRange range = NSMakeRange(0, 100);
+//            if (destStr.length <= 100) {
+//                range = NSMakeRange(0, destStr.length);
+//            }
+//            abstractText = [destStr substringWithRange:range];
+//        }
+//        else
+//        {
+//            NSRange range = NSMakeRange(0, 70);
+//            if (destStr.length <= 70) {
+//                range = NSMakeRange(0, destStr.length);
+//            }
+//            abstractText = [destStr substringWithRange:range];
+//        }
+//    }
+//    else
+//    {
+//        NSLog(@"the file name is %@",sourceFilePath);
+//    }
+//    
+//    
+//    NSString* sourceImagePath = [[WizFileManager shareManager] documentIndexFilesPath:documengGuid accountUserId:accountUserId];
+//    NSArray* imageFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:sourceImagePath  error:nil];
+//    
+//    NSString* maxImageFilePath = nil;
+//    int maxImageSize = 0;
+//    for (NSString* each in imageFiles) {
+//        NSArray* typeArry = [each componentsSeparatedByString:@"."];
+//        if ([WizGlobals checkAttachmentTypeIsImage:[typeArry lastObject]]) {
+//            NSString* sourceImageFilePath = [sourceImagePath stringByAppendingPathComponent:each];
+//            int fileSize = [WizGlobals fileLength:sourceFilePath];
+//            if (fileSize > maxImageSize && fileSize < 1024*1024) {
+//                maxImageFilePath = sourceImageFilePath;
+//            }
+//        }
+//    }
+//    UIImage* compassImage = nil;
+//    
+//    //
+//    if (nil != maxImageFilePath) {
+//        float compassWidth=140;
+//        float compassHeight = 140;
+//        UIImage* image = [[UIImage alloc] initWithContentsOfFile:maxImageFilePath];
+//        
+//        if (nil != image)
+//        {
+//            if (image.size.height >= compassHeight && image.size.width >= compassWidth) {
+//                compassImage = [image wizCompressedImageWidth:compassWidth height:compassHeight];
+//            }
+//            [image release];
+//        }
+//    }
+//    
+//    NSData* imageData = nil;
+//    if (nil != compassImage) {
+//        imageData = [compassImage compressedData];
+//    }
+//    WizAbstract* abs = [[WizAbstract alloc] init];
+//    abs.strText = abstractText;
+//    abs.uiImage = compassImage;
+//    id<WizTemporaryDataBaseDelegate> cacheDb = [[WizDbManager shareInstance] getGlobalCacheDb];
+//    [self setObject:abs forKey:documengGuid];
+//    
+//    NSMutableDictionary* userInfo = [NSMutableDictionary dictionary];
+//    [WizNotificationCenter addDocumentGuid:documengGuid toUserInfo:userInfo];
+//    
+//    [[WizNotificationCenter defaultCenter] postNotificationName:WizNMUIDidGenerateAbstract object:nil userInfo:userInfo];
+//
+//
+//    return [cacheDb updateAbstract:abstractText imageData:imageData guid:documengGuid type:@"" kbguid:nil];
 }
 
 
@@ -242,14 +242,14 @@
         [delegate didGetUnreadCountForKbguid:kbguid unreadCount:[unreadCount intValue]];
         return;
     }
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        id<WizMetaDataBaseDelegate> db = [[WizDbManager shareInstance] getMetaDataBaseForAccount:accountUserId kbGuid:kbguid];
-        int64_t count = [db documentUnReadCount];
-        [[self shareInstance] setObject:[NSNumber numberWithInt:count] forKey:key];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [delegate didGetUnreadCountForKbguid:kbguid unreadCount:count];
-        });
-    });
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//        id<WizMetaDataBaseDelegate> db = [[WizDbManager shareInstance] getMetaDataBaseForAccount:accountUserId kbGuid:kbguid];
+//        int64_t count = [db documentUnReadCount];
+//        [[self shareInstance] setObject:[NSNumber numberWithInt:count] forKey:key];
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [delegate didGetUnreadCountForKbguid:kbguid unreadCount:count];
+//        });
+//    });
 }
 + (void) clearUnreadCountByKbguid:(NSString *)kbguid accountUserId:(NSString *)userId
 {

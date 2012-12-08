@@ -11,12 +11,11 @@
 #import <QuartzCore/QuartzCore.h>
 #import "WizNotificationCenter.h"
 #import "WizSyncCenter.h"
-#import "WizDbManager.h"
 #import "WGGlobalCache.h"
 
 #define FONT_SIZE   16
 
-@interface WGGridViewCell () <WizUnreadCountDelegate, WGIMageCacheObserver>
+@interface WGGridViewCell () <WizUnreadCountDelegate, WGIMageCacheObserver, WizXmlSyncKbDelegate>
 {
     JSBadgeView* badgeView;
     CGSize _size;
@@ -51,7 +50,6 @@
 
 {
     [[WizNotificationCenter defaultCenter] removeObserver:self];
-//    [self removeObserver:self forKeyPath:@"textLabel.text" context:nil];
     [coverView release];
     [badgeView release];
     [_textLabel release];
@@ -107,34 +105,43 @@
         activityIndicatorView = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake((size.width - activityViewHeight), (size.height - activityViewHeight) , activityViewHeight, activityViewHeight)];
         [_imageView addSubview:activityIndicatorView];
         [_imageView bringSubviewToFront:activityIndicatorView];
-        //
-        WizNotificationCenter* center = [WizNotificationCenter defaultCenter];
-        [center addObserver:self selector:@selector(startSync:) name:WizNMSyncGroupStart object:nil];
-        [center addObserver:self selector:@selector(endSync:) name:WizNMSyncGroupEnd object:nil];
-        [center addObserver:self selector:@selector(endSync:) name:WizNMSyncGroupError object:nil];
+        
+        [self addObserver:self forKeyPath:@"kbguid" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
     }
     return self;
 }
-- (void) startSync:(NSNotification*)nc
+
+- (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    NSString* guid = [WizNotificationCenter getGuidFromNc:nc];
-    if ([guid isEqualToString:self.kbguid]) {
-        MULTIMAIN(^(void)
-          {
-              [activityIndicatorView startAnimating];
-          });
+    if ([keyPath isEqualToString:@"kbguid"]) {
+        NSString* kbOld = [change objectForKey:@"old"];
+        NSString* kbNew = [change objectForKey:@"new"];
+        if (kbOld != nil && ![kbOld isKindOfClass:[NSNull class]]){
+            [[WizUINotifactionCenter shareInstance] removeObserver:kbOld forKbguid:kbOld];
+            
+        }
+        if (kbNew != nil && ![kbNew isKindOfClass:[NSNull class]]) {
+            [[WizUINotifactionCenter shareInstance] addObserver:self kbguid:kbNew];
+        }
     }
 }
-- (void) endSync:(NSNotification*)nc
+
+- (void) OnSyncKbBegin:(NSString *)kbguid_
 {
-    NSString* guid = [WizNotificationCenter getGuidFromNc:nc];
-    if ([guid isEqualToString:self.kbguid]) {
-        MULTIMAIN(^(void)
-      {
-            [activityIndicatorView stopAnimating];
-      });
+    if ([kbguid_ isEqualToString:self.kbguid]) {
+       [activityIndicatorView startAnimating]; 
     }
-    [self setBadgeCount];
+}
+- (void) OnSyncKbEnd:(NSString *)kbguid_
+{
+    if ([kbguid_ isEqualToString:self.kbguid]) {
+       [activityIndicatorView stopAnimating]; 
+    }
+}
+
+- (void) OnSyncKbFaild:(NSString *)kbguid_
+{
+    [self OnSyncKbEnd:kbguid_];
 }
 
 - (id)initWithFrame:(CGRect)frame

@@ -14,16 +14,16 @@
 #import "WizFileManager.h"
 #import "WizSyncCenter.h"
 #import "MBProgressHUD.h"
+#import "WizMetaDb.h"
 
 @interface WizCheckAttachments () 
 {
-    NSMutableArray* attachments;
     UIAlertView* waitAlert;
     NSIndexPath* lastIndexPath;
     UIDocumentInteractionController* currentPreview;
     BOOL willCheckInWiz;
 }
-@property (nonatomic, retain) NSMutableArray* attachments;
+@property (nonatomic, assign) CWizDocumentAttachmentArray attachmentsArray;
 @property (nonatomic, retain) UIAlertView* waitAlert;
 @property (nonatomic, retain) NSIndexPath* lastIndexPath;
 @property (nonatomic, retain) UIDocumentInteractionController* currentPreview;
@@ -32,8 +32,8 @@
 
 @implementation WizCheckAttachments
 
-@synthesize doc;
-@synthesize attachments;
+@synthesize document;
+@synthesize attachmentsArray;
 @synthesize waitAlert;
 @synthesize lastIndexPath;
 @synthesize currentPreview;
@@ -43,8 +43,6 @@
     [[WizNotificationCenter defaultCenter] removeObserver:self];
     [currentPreview release];
     [lastIndexPath release];
-    [doc release];
-    [attachments release];
     [waitAlert release];
     [super dealloc];
 }
@@ -52,7 +50,6 @@
 {
     self = [super initWithStyle:style];
     if (self) {
-        attachments = [[NSMutableArray alloc] init];
         currentPreview = [[UIDocumentInteractionController alloc] init];
         currentPreview.delegate = self;
         // Custom initialization
@@ -91,8 +88,9 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    id<WizMetaDataBaseDelegate> db = [[WizDbManager shareInstance] getMetaDataBaseForAccount:self.accountUserId kbGuid:self.kbguid];
-    self.attachments = [NSMutableArray arrayWithArray:[db attachmentsByDocumentGUID:self.doc.strGuid]];
+     std::string dbPath = CWizFileManager::shareInstance()->metaDatabasePath(WizNSStringToCString(self.kbguid),WizNSStringToCString(self.accountUserId)  );
+    WizMetaDb metadb(dbPath.c_str());
+    metadb.attachmentsForDocument(self.document.strGUID.c_str(), attachmentsArray);
     self.title = NSLocalizedString(@"Attachments", nil);
 }
 
@@ -128,7 +126,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.attachments count];
+    return self.attachmentsArray.size();
 }
 - (NSURL*) getAttachmentFileURL:(WizAttachment*)attachment
 {
@@ -153,41 +151,41 @@
     if (cell == nil) {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
     }
-    WizAttachment* attach = [self.attachments objectAtIndex:indexPath.row];
-    if (attach.strType == nil || [attach.strType isEqualToString:@""]) {
-        attach.strType = @"noneType";
-    }
-    if (attach.bServerChanged) {
-        cell.detailTextLabel.text = NSLocalizedString(@"Tap to download", nil);
-    }
-    else 
-    {
-        cell.detailTextLabel.text = NSLocalizedString(@"Tap to view", nil);
-    }
-    if ([WizGlobals checkAttachmentTypeIsAudio:attach.strType]) {
-        cell.imageView.image = [UIImage imageNamed:@"icon_video_img"];
-    }
-    else  if ([WizGlobals checkAttachmentTypeIsPPT:attach.strType])
-    {
-        cell.imageView.image = [UIImage imageNamed:@"icon_ppt_img"];
-    }
-    else  if ([WizGlobals checkAttachmentTypeIsWord:attach.strType])
-    {
-        cell.imageView.image = [UIImage imageNamed:@"icon_word_img"];
-    }
-    else  if ([WizGlobals checkAttachmentTypeIsExcel:attach.strType])
-    {
-        cell.imageView.image = [UIImage imageNamed:@"icon_excel_img"];
-    }
-    else if ([WizGlobals checkAttachmentTypeIsImage:attach.strType])
-    {
-        cell.imageView.image = [UIImage imageNamed:@"icon_image_img"];
-    }
-    else 
-    {
-        cell.imageView.image = [UIImage imageNamed:@"icon_file_img"];
-    }
-    cell.textLabel.text = attach.strTitle;
+//    WizAttachment* attach = [self.attachmentsArray objectAtIndex:indexPath.row];
+//    if (attach.strType == nil || [attach.strType isEqualToString:@""]) {
+//        attach.strType = @"noneType";
+//    }
+//    if (attach.bServerChanged) {
+//        cell.detailTextLabel.text = NSLocalizedString(@"Tap to download", nil);
+//    }
+//    else 
+//    {
+//        cell.detailTextLabel.text = NSLocalizedString(@"Tap to view", nil);
+//    }
+//    if ([WizGlobals checkAttachmentTypeIsAudio:attach.strType]) {
+//        cell.imageView.image = [UIImage imageNamed:@"icon_video_img"];
+//    }
+//    else  if ([WizGlobals checkAttachmentTypeIsPPT:attach.strType])
+//    {
+//        cell.imageView.image = [UIImage imageNamed:@"icon_ppt_img"];
+//    }
+//    else  if ([WizGlobals checkAttachmentTypeIsWord:attach.strType])
+//    {
+//        cell.imageView.image = [UIImage imageNamed:@"icon_word_img"];
+//    }
+//    else  if ([WizGlobals checkAttachmentTypeIsExcel:attach.strType])
+//    {
+//        cell.imageView.image = [UIImage imageNamed:@"icon_excel_img"];
+//    }
+//    else if ([WizGlobals checkAttachmentTypeIsImage:attach.strType])
+//    {
+//        cell.imageView.image = [UIImage imageNamed:@"icon_image_img"];
+//    }
+//    else 
+//    {
+//        cell.imageView.image = [UIImage imageNamed:@"icon_file_img"];
+//    }
+//    cell.textLabel.text = attach.strTitle;
     cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
     return cell;
 }
@@ -218,59 +216,59 @@
 }
 -(void) checkAttachment:(WizAttachment*) attachment inWiz:(BOOL)inWiz
 {
-    if (!attachment.bServerChanged) {
-        if (inWiz) {
-            [self checkInWiz:attachment];
-        }
-        else {
-            [self checkInOtherApp:attachment];
-        }
-        
-    }
-    else
-    {
-        willCheckInWiz = inWiz;
-        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        [[WizSyncCenter defaultCenter] downloadAttachment:attachment kbguid:self.kbguid accountUserId:self.accountUserId priority:WizDownloadPriorityHigh];
-        [[WizNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadDone:) name:WizNMDidDownloadDocument object:nil];
-    }
+//    if (!attachment.bServerChanged) {
+//        if (inWiz) {
+//            [self checkInWiz:attachment];
+//        }
+//        else {
+//            [self checkInOtherApp:attachment];
+//        }
+//        
+//    }
+//    else
+//    {
+//        willCheckInWiz = inWiz;
+//        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+//        [[WizSyncCenter defaultCenter] downloadAttachment:attachment kbguid:self.kbguid accountUserId:self.accountUserId priority:WizDownloadPriorityHigh];
+//        [[WizNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadDone:) name:WizNMDidDownloadDocument object:nil];
+//    }
     
 }
 - (BOOL) checkAttachmentIsThere:(NSString*)attachmentGUID
 {
-    for (int i = 0; i<[self.attachments count]; i++) {
-        WizAttachment* attach = [self.attachments objectAtIndex:i];
-        if ([attach.strGuid isEqualToString:attachmentGUID]) {
-            return YES;
-        }
-    }
+//    for (int i = 0; i<[self.attachments count]; i++) {
+//        WizAttachment* attach = [self.attachments objectAtIndex:i];
+//        if ([attach.strGuid isEqualToString:attachmentGUID]) {
+//            return YES;
+//        }
+//    }
     return NO;
 }
 
 - (void) downloadDone:(NSNotification*)nc
 {
     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-    NSString* guid = [WizNotificationCenter getDocumentGuidFromNc:nc];
-    if (guid == nil) {
-        return;
-    }
-    WizAttachment* attachment = [self.attachments objectAtIndex:self.lastIndexPath.row];
-    if ([guid isEqualToString:attachment.strGuid]) {
-        [self checkAttachment:attachment inWiz:willCheckInWiz];
-        [self.waitAlert dismissWithClickedButtonIndex:0 animated:YES];
-        self.waitAlert = nil;
-    }
+//    NSString* guid = [WizNotificationCenter getDocumentGuidFromNc:nc];
+//    if (guid == nil) {
+//        return;
+//    }
+//    WIZDOCUMENTATTACH attachment = self.attachmentsArray.at(indexPath.row);
+//    if ([guid isEqualToString:attachment.strGuid]) {
+//        [self checkAttachment:attachment inWiz:willCheckInWiz];
+//        [self.waitAlert dismissWithClickedButtonIndex:0 animated:YES];
+//        self.waitAlert = nil;
+//    }
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    WizAttachment* attch = [self.attachments objectAtIndex:indexPath.row];
-    self.lastIndexPath = indexPath;
-    [self checkAttachment:attch inWiz:YES];
+    WIZDOCUMENTATTACH attachment = self.attachmentsArray.at(indexPath.row);
+//    self.lastIndexPath = indexPath;
+//    [self checkAttachment:attch inWiz:YES];
 }
 - (void) tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
-    WizAttachment* attch = [self.attachments objectAtIndex:indexPath.row];
-    self.lastIndexPath = indexPath;
-    [self checkAttachment:attch inWiz:NO];
+//    WIZDOCUMENTATTACH attachment = self.attachmentsArray.at(indexPath.row);
+//    self.lastIndexPath = indexPath;
+//    [self checkAttachment:attch inWiz:NO];
 }
 @end

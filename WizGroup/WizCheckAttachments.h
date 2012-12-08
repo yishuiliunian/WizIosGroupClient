@@ -8,14 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "WizPadCheckAttachmentDelegate.h"
-
+#import "WizModuleTransfer.h"
+using namespace WizModule;
 @interface WizCheckAttachments : UITableViewController <UIAlertViewDelegate,UIDocumentInteractionControllerDelegate>
 {
-    WizDocument* doc;
     id <WizPadCheckAttachmentDelegate> checkAttachmentDelegate;
     
 }
-@property (nonatomic, retain) WizDocument* doc;
+@property (nonatomic, assign) WIZDOCUMENTDATA document;
 @property (nonatomic, assign)    id <WizPadCheckAttachmentDelegate> checkAttachmentDelegate;
 @property (nonatomic, retain) NSString* kbguid;
 @property (nonatomic, retain) NSString* accountUserId;

@@ -20,27 +20,30 @@
 #import "WGDetailViewController.h"
 #import "WGListViewController.h"
 #import "WizGlobals.h"
+#import "WizSettings.h"
 
 #import "WizSyncCenter.h"
 
 #import "WGGlobalCache.h"
-
-
-#import "WizDbManager.h"
 //
 #import "WGToolBar.h"
 
 #import "WGNavigationViewController.h"
 //
 #import "WGBarButtonItem.h"
+#import "WizModuleTransfer.h"
+
 
 //
 #define WGGroupListRefreshButtonTag 3934
 
-@interface WGMainViewController () <GMGridViewDataSource, GMGridViewActionDelegate, EGORefreshTableHeaderDelegate, UIScrollViewDelegate>
+//
+using namespace WizModule;
+
+@interface WGMainViewController () <GMGridViewDataSource, GMGridViewActionDelegate, EGORefreshTableHeaderDelegate, UIScrollViewDelegate, WizXmlSyncAccountDelegate>
 {
     GMGridView* groupGridView;
-    NSMutableArray* groupsArray;
+    CWizGroupArray groupsArray;
     //
     UIView*     titleView;
     BOOL    isRefreshing;
@@ -63,7 +66,6 @@
     [[WizNotificationCenter defaultCenter] removeObserver:self];
     [titleView release];
     [groupGridView release];
-    [groupsArray release];
     [userNameLabel release];
     //
     [refreshImageView release];
@@ -75,16 +77,31 @@
 {
     self.numberOfSyncingGroups ++;
     if (self.numberOfSyncingGroups != 0) {
-        [self showActivityIndicator];
     }
 }
 - (void) endSync:(NSNotification*)nc
 {
-    self.numberOfSyncingGroups --;
     if (self.numberOfSyncingGroups == 0) {
         [self doneLoadingTableViewData];
         [self showReloadButton];
     }
+}
+
+- (void) didSyncAccountSucceed:(NSString *)userId
+{
+    [self doneLoadingTableViewData];
+    [self showReloadButton];
+}
+
+- (void) didSyncAccountStart:(NSString *)userId
+{
+    [self showActivityIndicator];
+}
+
+- (void) didSyncAccountFaild:(NSString *)userId
+{
+    [self doneLoadingTableViewData];
+    [self showReloadButton];
 }
 
 - (void) doneLoadingTableViewData
@@ -115,8 +132,7 @@
 - (NSDate*) egoRefreshTableHeaderDataSourceLastUpdated:(EGORefreshTableHeaderView *)view
 {
     NSString* activeAccount = [[WizAccountManager defaultManager] activeAccountUserId];
-    id<WizSettingsDbDelegate> db = [[WizDbManager shareInstance] getGlobalSettingDb];
-    return [db lastUpdateTimeForGroup:nil accountUserId:activeAccount];
+    return [[WizSettings shareInstance] lastUpdateDateForKey:activeAccount];
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -127,9 +143,9 @@
         [[WizNotificationCenter defaultCenter] addObserver:self selector:@selector(clearGroupView) name:WizNMWillUpdateGroupList object:nil];
         
         WizNotificationCenter* center = [WizNotificationCenter defaultCenter];
-        [center addObserver:self selector:@selector(startSync:) name:WizNMSyncGroupStart object:nil];
-        [center addObserver:self selector:@selector(endSync:) name:WizNMSyncGroupEnd object:nil];
-        [center addObserver:self selector:@selector(endSync:) name:WizNMSyncGroupError object:nil];
+        [center addObserver:self selector:@selector(registerAccountUserId:) name:WizNMRegisterActiveAccountUserId object:nibBundleOrNil];
+        [center addObserver:self selector:@selector(resignAccountUserId:) name:WizNMResignActiveAccountUserId object:nibBundleOrNil];
+        
     }
     return self;
 }
@@ -145,6 +161,21 @@
     }
     
 }
+
+- (void) registerAccountUserId:(NSNotification*)nc
+{
+    NSString* activeAccountUserId = [WizNotificationCenter getGuidFromNc:nc];
+    [[WizUINotifactionCenter shareInstance] addObserver:self kbguid:activeAccountUserId];
+    [self reloadGroupView];
+}
+
+- (void) resignAccountUserId:(NSNotification*)nc
+{
+    NSString* oldAccountUserId = [WizNotificationCenter getGuidFromNc:nc];
+    [[WizUINotifactionCenter shareInstance] removeObserver:self forKbguid:oldAccountUserId];
+    [self clearGroupView];
+}
+
 - (void) loadView
 {
     [super loadView];
@@ -201,7 +232,7 @@
 }
 - (void) clearGroupView
 {
-    [groupsArray removeAllObjects];
+    groupsArray.clear();
     [groupGridView reloadData];
 }
 
@@ -216,9 +247,8 @@
 {
     WizAccountManager* accountManager = [WizAccountManager defaultManager];
     NSString* accountUserId = [accountManager activeAccountUserId];
-    NSArray* groups = [accountManager groupsForAccount:accountUserId];
-    [groupsArray removeAllObjects];
-    [groupsArray addObjectsFromArray:groups];
+    groupsArray.clear();
+    groupsArray = [accountManager groupsForAccount:accountUserId];
     [groupGridView reloadData];
 }
 
@@ -278,16 +308,10 @@
     groupGridView.mainSuperView = self.navigationController.view;
     groupGridView.dataSource = self;
     groupGridView.actionDelegate = self;
-    if (groupsArray == nil) {
-        groupsArray = [[NSMutableArray alloc] init];
-    }
-
     [self reloadGroupView];
     
     UIButton* button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.tag = WGGroupListRefreshButtonTag;
-    
-    
     UIImage* normalImage = [UIImage imageNamed:@"group_list_refresh"];
     UIImage* refreshImage1 = [UIImage imageNamed:@"group_list_refresh1"];
     UIImage* refreshImage2 = [UIImage imageNamed:@"group_list_refresh2"];
@@ -309,12 +333,11 @@
     self.refreshImageView = imageView;
     [imageView release];
     //
-
 }
 
 - (NSInteger) numberOfItemsInGMGridView:(GMGridView *)gridView
 {
-    return [groupsArray count] ;
+    return groupsArray.size();
 }
 - (CGSize) GMGridView:(GMGridView *)gridView sizeForItemsInInterfaceOrientation:(UIInterfaceOrientation)orientation
 {
@@ -326,32 +349,32 @@
     CGSize size = [self GMGridView:gridView sizeForItemsInInterfaceOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
     
     
-//    if (index == [groupsArray count]) {
-//        GMGridViewCell* cell = [[[GMGridViewCell alloc] initWithFrame:CGRectMake(0.0, 0.0, size.width, size.height)] autorelease];
-//        
-//        float labelWidth = 100;
-//        float labelHeight = 20;
-//        
-//        
-//        UILabel* addNewLabel = [[UILabel alloc] initWithFrame:CGRectMake((size.width-labelWidth)/2 + labelHeight, (size.height - labelHeight)/2, labelWidth, labelHeight)];
-//        
-//
-//        
-//        addNewLabel.font = [UIFont systemFontOfSize:16];
-//        addNewLabel.textColor = [UIColor lightGrayColor];
-//        addNewLabel.backgroundColor = [UIColor clearColor];
-//        addNewLabel.text = NSLocalizedString(@"Add Group", nil);
-//        [cell addSubview:addNewLabel];
-//        [addNewLabel release];
-//        //
-//        UIImageView* addNewImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"addNewGroupIcon"]];
-//        addNewImageView.frame = CGRectMake(addNewLabel.frame.origin.x - labelHeight, addNewLabel.frame.origin.y, labelHeight, labelHeight);
-//        [cell addSubview:addNewImageView];
-//        [addNewImageView release];
-//        //
-//        cell.backgroundColor = [UIColor colorWithRed:248/255.0 green:248/255.0 blue:248/255.0 alpha:1.0];
-//        return cell;
-//    }
+    if (index == groupsArray.size()){
+        GMGridViewCell* cell = [[[GMGridViewCell alloc] initWithFrame:CGRectMake(0.0, 0.0, size.width, size.height)] autorelease];
+        
+        float labelWidth = 100;
+        float labelHeight = 20;
+        
+        
+        UILabel* addNewLabel = [[UILabel alloc] initWithFrame:CGRectMake((size.width-labelWidth)/2 + labelHeight, (size.height - labelHeight)/2, labelWidth, labelHeight)];
+        
+
+        
+        addNewLabel.font = [UIFont systemFontOfSize:16];
+        addNewLabel.textColor = [UIColor lightGrayColor];
+        addNewLabel.backgroundColor = [UIColor clearColor];
+        addNewLabel.text = NSLocalizedString(@"Add Group", nil);
+        [cell addSubview:addNewLabel];
+        [addNewLabel release];
+        //
+        UIImageView* addNewImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"addNewGroupIcon"]];
+        addNewImageView.frame = CGRectMake(addNewLabel.frame.origin.x - labelHeight, addNewLabel.frame.origin.y, labelHeight, labelHeight);
+        [cell addSubview:addNewImageView];
+        [addNewImageView release];
+        //
+        cell.backgroundColor = [UIColor colorWithRed:248/255.0 green:248/255.0 blue:248/255.0 alpha:1.0];
+        return cell;
+    }
     
     WGGridViewCell *cell = (WGGridViewCell*)[gridView dequeueReusableCell];
     if (!cell)
@@ -359,12 +382,12 @@
         cell = [[[WGGridViewCell alloc] initWithSize:size] autorelease];
     }
 
-    WizGroup* group = [groupsArray objectAtIndex:index];
-    cell.textLabel.text =  group.kbName;
-    cell.kbguid = group.kbguid;
-    cell.accountUserId = group.accountUserId;
+    WIZGROUPDATA group = groupsArray.at(index);
+    cell.textLabel.text =  WizStdStringToNSString(group.kbName);
+    cell.kbguid = WizStdStringToNSString(group.kbGuid);
+    cell.accountUserId = WizStdStringToNSString(group.accountUserId);
     [cell setBadgeCount];
-    if ([[WizSyncCenter defaultCenter]  isRefreshingGroup:group.kbguid accountUserId:group.accountUserId ]) {
+    if ([WizUINotifactionCenter isSyncingGuid:WizStdStringToNSString(group.kbGuid)]) {
         [cell.activityIndicator startAnimating];
     }
     else
@@ -379,7 +402,6 @@
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    groupsArray = nil;
     self.refreshButton = nil;
     self.refreshImageView = nil;
     // Release any retained subviews of the main view.
@@ -392,42 +414,39 @@
 
 - (void) GMGridView:(GMGridView *)gridView didTapOnItemAtIndex:(NSInteger)position
 {
-    if (position == [groupsArray count]) {
-        
+    if (position ==groupsArray.size()) {
         NSLog(@"add new");
         return;
     }
-    
-    WizGroup* group = [groupsArray objectAtIndex:position];
+    WIZGROUPDATA group = groupsArray.at(position);
     NSString* activeAccountUserId = [[WizAccountManager defaultManager] activeAccountUserId];
     
     
-    WGDetailViewController* detailCon = [[WGDetailViewController alloc] init];
-    detailCon.kbGuid = group.kbguid;
-    detailCon.accountUserId = activeAccountUserId;
+//    WGDetailViewController* detailCon = [[WGDetailViewController alloc] init];
+//    detailCon.kbGuid = group.kbguid;
+//    detailCon.accountUserId = activeAccountUserId;
     //
     WGListViewController* listCon = [[WGListViewController alloc] init];
-    listCon.kbGuid = group.kbguid;
-    listCon.accountUserId = activeAccountUserId;
+    listCon.kbGuid = group.kbGuid;
+    listCon.accountUserId = WizNSStringToStdString(activeAccountUserId);
     listCon.listType = WGListTypeRecent;
-    listCon.kbGroup = group;
     //
     WGNavigationViewController* centerNav = [[WGNavigationViewController alloc] initWithRootViewController:listCon];
     
     PPRevealSideViewController* ppSideController = [[PPRevealSideViewController alloc] initWithRootViewController:centerNav];
     [ppSideController setDirectionsToShowBounce:PPRevealSideDirectionLeft];
-    [ppSideController preloadViewController:detailCon forSide:PPRevealSideDirectionLeft];
+//    [ppSideController preloadViewController:detailCon forSide:PPRevealSideDirectionLeft];
  
-//    CATransition *tran = [CATransition animation];
-//    tran.duration = .4f;
-//    tran.type = kCATransitionPush;
-//    tran.subtype = kCATransitionFromTop; //Bottom for the opposite direction
-//    tran.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
-//    tran.removedOnCompletion  = YES;
-//    [self.navigationController.view.layer addAnimation:tran forKey:@"TransitionDownUp"];
+    CATransition *tran = [CATransition animation];
+    tran.duration = .4f;
+    tran.type = kCATransitionPush;
+    tran.subtype = kCATransitionFromTop; //Bottom for the opposite direction
+    tran.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
+    tran.removedOnCompletion  = YES;
+    [self.navigationController.view.layer addAnimation:tran forKey:@"TransitionDownUp"];
     [self.navigationController presentModalViewController:ppSideController animated:YES];
     
-    [detailCon release];
+//    [detailCon release];
     [listCon release];
     [ppSideController release];
     [centerNav release];
@@ -453,7 +472,8 @@
 - (void) refreshGroupData
 {
     NSString* userId = [[WizAccountManager defaultManager] activeAccountUserId];
-    [[WizSyncCenter defaultCenter] refreshAccount:userId];
+    NSString* password  = [[WizAccountManager defaultManager] accountPasswordByUserId:userId];
+    [WizSyncCenter syncAccount:userId password:password];
     [self.refreshImageView startAnimating];
 }
 - (void) viewWillAppear:(BOOL)animated

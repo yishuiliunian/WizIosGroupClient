@@ -9,7 +9,6 @@
 #import "DocumentInfoViewController.h"
 #import "WizGlobals.h"
 #import "CommonString.h"
-#import "WizDbManager.h"
 #import "WGNavigationViewController.h"
 @interface DocumentInfoViewController()
 {
