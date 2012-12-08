@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "WizModuleTransfer.h"
+using namespace WizModule;
 @interface WGDetailListCell : UITableViewCell
-@property (atomic, retain) NSString* documentGuid;
-@property (atomic, retain) NSString* kbGuid;
-@property (atomic, retain) NSString* accountUserId;
+@property (nonatomic, assign) WIZDOCUMENTDATA doc;
+@property (nonatomic, assign) std::string kbguid;
+@property (nonatomic, assign) std::string accountUserId;
 @end

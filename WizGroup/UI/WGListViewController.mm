@@ -34,7 +34,9 @@ using namespace WizModule;
 
 @interface WGListViewController () <WGReadListDelegate,
                                     EGORefreshTableHeaderDelegate,
-                                    UISearchBarDelegate,UISearchDisplayDelegate>
+                                    UISearchBarDelegate,
+                                    UISearchDisplayDelegate,
+                                    WizXmlSyncKbDelegate>
 {
     CWizDocumentsGroups documentsArray;
     BOOL    isRefreshing;
@@ -63,6 +65,7 @@ using namespace WizModule;
 @synthesize searchHistoryArray;
 - (void) dealloc
 {
+    [[WizUINotifactionCenter shareInstance] removeObserver:self];
     [searchKeyWords release];
     [searchedDocumentsArray release];
     [searchHistoryArray release];
@@ -95,22 +98,31 @@ using namespace WizModule;
     }
     return self;
 }
-- (void) startRefreshingGroup:(NSNotification*)nc
+- (void) OnSyncKbBegin:(NSString *)kbguid
 {
-   
-    
+   if (self.kbGuid == WizNSStringToStdString(kbguid))
+   {
+       if(isRefreshing)
+       {
+           return;
+       }
+       isRefreshing = YES;
+   }
 }
 
-- (void) endRefreshGroup:(NSNotification*)nc
+- (void) OnSyncKbEnd:(NSString *)kbguid
 {
-//    NSString* guid = [WizNotificationCenter getGuidFromNc:nc];
-//    if ([self.kbGuid isEqualToString:guid]) {
-//        isRefreshing = NO;
-//        [self.pullToRefreshView egoRefreshScrollViewDataSourceDidFinishedLoading:self.tableView];
-//        [self reloadAllData];
-//    }
+    if (self.kbGuid == WizNSStringToStdString(kbguid)) {
+        isRefreshing = NO;
+        [self.pullToRefreshView egoRefreshScrollViewDataSourceDidFinishedLoading:self.tableView];
+        [self reloadAllData];
+    }
 }
-//
+
+- (void) OnSyncKbFaild:(NSString *)kbguid
+{
+    [self OnSyncKbEnd:kbguid];
+}
 - (std::string) getMetaDbPath
 {
     return CWizFileManager::shareInstance()->metaDatabasePath(self.kbGuid.c_str(), self.accountUserId.c_str());
@@ -162,23 +174,16 @@ using namespace WizModule;
     documentsArray.setDocuments(array, CWizDocumentsSortedTypeByTitle);
     [self.tableView reloadData];
 }
-//
-//
-//
+
+
 - (void) backToHome
 {
     CATransition *tran = [CATransition animation];
-    
     tran.duration = .4f;
-    
     tran.type = kCATransitionPush;
-    
     tran.subtype = kCATransitionFromBottom; //Bottom for the opposite direction
-    
     tran.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
-    
     tran.removedOnCompletion  = YES;
-    
     [self.navigationController.view.layer addAnimation:tran forKey:@"TransitionDownUp"];
     [self.revealSideViewController dismissModalViewControllerAnimated:YES];
 }
@@ -248,7 +253,7 @@ using namespace WizModule;
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-   
+    [[WizUINotifactionCenter shareInstance] addObserver:self kbguid:WizStdStringToNSString(self.kbGuid)];
 }
 
 - (void) viewDidDisappear:(BOOL)animated
@@ -305,6 +310,7 @@ using namespace WizModule;
     [self.tableView addSubview:self.pullToRefreshView];
     
     //
+    
 //    isRefreshing = [[WizSyncCenter defaultCenter]  isRefreshingGroup:self.kbGuid accountUserId:self.accountUserId];
     if (isRefreshing) {
         [self.pullToRefreshView startLoadingAnimation:self.tableView];
@@ -381,7 +387,6 @@ using namespace WizModule;
     if ([tableView isEqual:self.searchDisplayCon.searchResultsTableView]) {
         return [self searchTableView:tableView cellForRowAtIndexPath:indexPath];
     }
-    //
     static NSString *CellIdentifier = @"ListCell";
     WGDetailListCell *cell = (WGDetailListCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
@@ -389,9 +394,9 @@ using namespace WizModule;
         cell = [[[WGDetailListCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
     }
     WIZDOCUMENTDATA doc = documentsArray.getDocument(indexPath.section, indexPath.row);
-//    cell.documentGuid = doc.strGuid;
-//    cell.kbGuid = self.kbGuid;
-//    cell.accountUserId = self.accountUserId;
+    cell.doc = doc;
+    cell.kbguid= self.kbGuid;
+    cell.accountUserId = self.accountUserId;
     return cell;
 }
 
@@ -491,7 +496,8 @@ using namespace WizModule;
 //}
 - (void) refreshGroupData
 {
-    [[WizSyncCenter defaultCenter] refreshGroup:self.kbGuid accountUserId:self.accountUserId];
+    [WizSyncCenter defaultCenter] ;
+    [WizSyncCenter syncKbGuid:self.kbGuid account:self.accountUserId isOnlyUpload:NO userGroup:0];
 }
 - (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
