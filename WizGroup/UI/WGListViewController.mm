@@ -98,9 +98,9 @@ using namespace WizModule;
     }
     return self;
 }
-- (void) OnSyncKbBegin:(NSString *)kbguid
+- (void) OnSyncKbBegin:(std::string)kbguid
 {
-   if (self.kbGuid == WizNSStringToStdString(kbguid))
+   if (self.kbGuid == kbguid)
    {
        if(isRefreshing)
        {
@@ -110,18 +110,18 @@ using namespace WizModule;
    }
 }
 
-- (void) OnSyncKbEnd:(NSString *)kbguid
+- (void) OnSyncKbEnd:(std::string)kbguid
 {
-    if (self.kbGuid == WizNSStringToStdString(kbguid)) {
+    if (self.kbGuid == kbGuid) {
         isRefreshing = NO;
         [self.pullToRefreshView egoRefreshScrollViewDataSourceDidFinishedLoading:self.tableView];
         [self reloadAllData];
     }
 }
 
-- (void) OnSyncKbFaild:(NSString *)kbguid
+- (void) OnSyncKbFaild:(std::string)kbguid
 {
-    [self OnSyncKbEnd:kbguid];
+   [self OnSyncKbEnd:kbguid]; 
 }
 - (std::string) getMetaDbPath
 {
@@ -171,7 +171,10 @@ using namespace WizModule;
         default:
             break;
     }
-    documentsArray.setDocuments(array, CWizDocumentsSortedTypeByTitle);
+    documentsArray.setDocuments(array, CWizDocumentsSortedTypeByModifiedDateAsc);
+//    for (CWizDocumentDataArray::const_iterator itor = array.begin(); itor != array.end(); itor++) {
+//        [WizSyncCenter downloadDocument:itor->strGUID kbguid:self.kbGuid account:self.accountUserId];
+//    }
     [self.tableView reloadData];
 }
 
@@ -248,12 +251,11 @@ using namespace WizModule;
 - (void) viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-     
 }
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [[WizUINotifactionCenter shareInstance] addObserver:self kbguid:WizStdStringToNSString(self.kbGuid)];
+    [[WizUINotifactionCenter shareInstance] addObserver:self kbguid:(self.kbGuid)];
 }
 
 - (void) viewDidDisappear:(BOOL)animated
@@ -336,11 +338,14 @@ using namespace WizModule;
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
-
+- (NSString*) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return WizStdStringToNSString(documentsArray.getGroupName(section));
+}
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     if ([tableView isEqual:self.tableView]) {
-        return 1;
+        return documentsArray.getGroupCount();
     }
     else if ([tableView isEqual:self.searchDisplayCon.searchResultsTableView])
     {
@@ -440,36 +445,35 @@ using namespace WizModule;
         return;
     }
     //
-//    self.lastIndexPath = indexPath;
-//    WGReadViewController* readController = [[WGReadViewController alloc] init];
-//    readController.kbguid = self.kbGuid;
-//    readController.accountUserId = self.accountUserId;
-//    readController.listDelegate = self;
-//    
-//    
-//    [self.navigationController pushViewController:readController animated:YES];
-//    self.revealSideViewController.panInteractionsWhenClosed = PPRevealSideInteractionNone;
-//    [readController release];
+    self.lastIndexPath = indexPath;
+    WGReadViewController* readController = [[WGReadViewController alloc] init];
+    readController.kbguid = self.kbGuid;
+    readController.accountUserId = self.accountUserId;
+    readController.listDelegate = self;
+    
+    
+    [self.navigationController pushViewController:readController animated:YES];
+    self.revealSideViewController.panInteractionsWhenClosed = PPRevealSideInteractionNone;
+    [readController release];
 }
 // read deleagte
-
+- (std::string) currentDocumentGuid
+{
+    if (self.lastIndexPath!= nil ) {
+        return documentsArray.getDocument(self.lastIndexPath.section, self.lastIndexPath.row).strGUID;
+    }
+    return "";
+}
 //- (WizDocument*) currentDocument
 //{
-//    if (self.lastIndexPath!= nil  && self.lastIndexPath.row < [documentsArray count]) {
-//        return [documentsArray objectAtIndex:self.lastIndexPath.row];
-//    }
-//    return nil;
 //}
 //
-//- (BOOL) shouldCheckNextDocument
-//{
-//    if (self.lastIndexPath != nil) {
-//        if (self.lastIndexPath.row + 1 < [documentsArray count]) {
-//            return YES;
-//        }
-//    }
-//    return NO;
-//}
+- (BOOL) shouldCheckNextDocument
+{
+    if (self.lastIndexPath != nil) {
+    }
+    return NO;
+}
 //
 //- (void) moveToNextDocument
 //{
@@ -478,15 +482,11 @@ using namespace WizModule;
 //    }
 //}
 //
-//- (BOOL) shouldCheckPreDocument
-//{
-//    if (self.lastIndexPath != nil) {
-//        if (self.lastIndexPath.row - 1 >= 0) {
-//            return YES;
-//        }
-//    }
-//    return NO;
-//}
+- (BOOL) shouldCheckPreDocument
+{
+    
+    return NO;
+}
 //
 //- (void) moveToPreDocument
 //{

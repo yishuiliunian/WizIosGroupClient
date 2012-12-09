@@ -87,18 +87,18 @@ using namespace WizModule;
     }
 }
 
-- (void) didSyncAccountSucceed:(NSString *)userId
+- (void) didSyncAccountSucceed:(std::string)userId
 {
     [self doneLoadingTableViewData];
     [self showReloadButton];
 }
 
-- (void) didSyncAccountStart:(NSString *)userId
+- (void) didSyncAccountStart:(std::string)userId
 {
     [self showActivityIndicator];
 }
 
-- (void) didSyncAccountFaild:(NSString *)userId
+- (void) didSyncAccountFaild:(std::string)userId
 {
     [self doneLoadingTableViewData];
     [self showReloadButton];
@@ -145,9 +145,18 @@ using namespace WizModule;
         WizNotificationCenter* center = [WizNotificationCenter defaultCenter];
         [center addObserver:self selector:@selector(registerAccountUserId:) name:WizNMRegisterActiveAccountUserId object:nibBundleOrNil];
         [center addObserver:self selector:@selector(resignAccountUserId:) name:WizNMResignActiveAccountUserId object:nibBundleOrNil];
+        [center addObserver:self selector:@selector(groupListUpdated:) name:WizNMUpdateGroupsList object:nil];
         
     }
     return self;
+}
+
+- (void) groupListUpdated:(NSNotification*)nc
+{
+    NSString* accountUserId = [WizNotificationCenter getGuidFromNc:nc];
+    if ([accountUserId isEqualToString:[[WizAccountManager defaultManager] activeAccountUserId]]) {
+        [self reloadAllGroups];
+    }
 }
 - (void) loadActiveAccountName
 {
@@ -165,14 +174,14 @@ using namespace WizModule;
 - (void) registerAccountUserId:(NSNotification*)nc
 {
     NSString* activeAccountUserId = [WizNotificationCenter getGuidFromNc:nc];
-    [[WizUINotifactionCenter shareInstance] addObserver:self kbguid:activeAccountUserId];
+    [[WizUINotifactionCenter shareInstance] addObserver:self kbguid:WizNSStringToStdString(activeAccountUserId)];
     [self reloadGroupView];
 }
 
 - (void) resignAccountUserId:(NSNotification*)nc
 {
     NSString* oldAccountUserId = [WizNotificationCenter getGuidFromNc:nc];
-    [[WizUINotifactionCenter shareInstance] removeObserver:self forKbguid:oldAccountUserId];
+    [[WizUINotifactionCenter shareInstance] removeObserver:self forKbguid:WizNSStringToStdString(oldAccountUserId)];
     [self clearGroupView];
 }
 
@@ -384,10 +393,9 @@ using namespace WizModule;
 
     WIZGROUPDATA group = groupsArray.at(index);
     cell.textLabel.text =  WizStdStringToNSString(group.kbName);
-    cell.kbguid = WizStdStringToNSString(group.kbGuid);
-    cell.accountUserId = WizStdStringToNSString(group.accountUserId);
-    [cell setBadgeCount];
-    if ([WizUINotifactionCenter isSyncingGuid:WizStdStringToNSString(group.kbGuid)]) {
+    cell.accountUserId = group.accountUserId;
+    cell.kbguid = group.kbGuid;
+    if ([WizUINotifactionCenter isSyncingGuid:group.kbGuid]) {
         [cell.activityIndicator startAnimating];
     }
     else
@@ -473,7 +481,7 @@ using namespace WizModule;
 {
     NSString* userId = [[WizAccountManager defaultManager] activeAccountUserId];
     NSString* password  = [[WizAccountManager defaultManager] accountPasswordByUserId:userId];
-    [WizSyncCenter syncAccount:userId password:password];
+    [WizSyncCenter syncAccount:WizNSStringToStdString(userId) password:WizNSStringToStdString(password)];
     [self.refreshImageView startAnimating];
 }
 - (void) viewWillAppear:(BOOL)animated

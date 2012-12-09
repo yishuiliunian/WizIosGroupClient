@@ -7,10 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import <string>
+#import "WizModuleTransfer.h"
+using namespace WizModule;
 @protocol WGReadListDelegate <NSObject>
 
-- (WizDocument*) currentDocument;
+- (std::string) currentDocumentGuid;
 - (BOOL) shouldCheckNextDocument;
 - (void) moveToNextDocument;
 - (BOOL) shouldCheckPreDocument;
@@ -20,6 +22,6 @@
 
 @interface WGReadViewController : UIViewController
 @property (assign, nonatomic) id<WGReadListDelegate> listDelegate;
-@property (nonatomic, retain) NSString* kbguid;
-@property (nonatomic, retain) NSString* accountUserId;
+@property (nonatomic, assign) std::string kbguid;
+@property (nonatomic, assign) std::string accountUserId;
 @end

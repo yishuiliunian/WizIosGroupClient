@@ -55,8 +55,6 @@
     [_textLabel release];
     [_imageView release];
     [activityIndicatorView release];
-    [kbguid release];
-    [accountUserId release];
     [super dealloc];
 }
 
@@ -105,41 +103,36 @@
         activityIndicatorView = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake((size.width - activityViewHeight), (size.height - activityViewHeight) , activityViewHeight, activityViewHeight)];
         [_imageView addSubview:activityIndicatorView];
         [_imageView bringSubviewToFront:activityIndicatorView];
-        
-        [self addObserver:self forKeyPath:@"kbguid" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
     }
     return self;
 }
-
-- (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void) setKbguid:(std::string)kbguid_
 {
-    if ([keyPath isEqualToString:@"kbguid"]) {
-        NSString* kbOld = [change objectForKey:@"old"];
-        NSString* kbNew = [change objectForKey:@"new"];
-        if (kbOld != nil && ![kbOld isKindOfClass:[NSNull class]]){
-            [[WizUINotifactionCenter shareInstance] removeObserver:kbOld forKbguid:kbOld];
-            
-        }
-        if (kbNew != nil && ![kbNew isKindOfClass:[NSNull class]]) {
-            [[WizUINotifactionCenter shareInstance] addObserver:self kbguid:kbNew];
-        }
+    if (!kbguid_.empty()) {
+        [[WizUINotifactionCenter shareInstance] removeObserver:self forKbguid:kbguid];
+    }
+    kbguid = kbguid_;
+    if (!kbguid.empty()) {
+        [[WizUINotifactionCenter shareInstance] addObserver:self kbguid:kbguid];
     }
 }
 
-- (void) OnSyncKbBegin:(NSString *)kbguid_
+
+- (void) OnSyncKbBegin:(std::string)kbguid_
 {
-    if ([kbguid_ isEqualToString:self.kbguid]) {
+    if (kbguid_ == self.kbguid) {
        [activityIndicatorView startAnimating]; 
     }
 }
-- (void) OnSyncKbEnd:(NSString *)kbguid_
+
+- (void) OnSyncKbEnd:(std::string)kbguid_
 {
-    if ([kbguid_ isEqualToString:self.kbguid]) {
-       [activityIndicatorView stopAnimating]; 
+    if (kbguid_ == self.kbguid) {
+       [activityIndicatorView stopAnimating];  
     }
 }
 
-- (void) OnSyncKbFaild:(NSString *)kbguid_
+- (void) OnSyncKbFaild:(std::string)kbguid_
 {
     [self OnSyncKbEnd:kbguid_];
 }
@@ -152,43 +145,43 @@
     }
     return self;
 }
-- (void) didGetUnreadCountForKbguid:(NSString*)guid  unreadCount:(int64_t)count
-{
-    if (![guid isEqualToString:self.kbguid]) {
-        return;
-    }
-    if (count <= 0) {
-        badgeView.hidden = YES;
-    }
-    else
-    {
-        badgeView.hidden = NO;
-        if (count > 9) {
-            badgeView.badgeText = [NSString stringWithFormat:@"N"];
-        }
-        else
-        {
-            badgeView.badgeText = [NSString stringWithFormat:@"%lld",count];
-        }
-    }
-}
+//- (void) didGetUnreadCountForKbguid:(std::string)guid  unreadCount:(int64_t)count
+//{
+//    if (![guid isEqualToString:self.kbguid]) {
+//        return;
+//    }
+//    if (count <= 0) {
+//        badgeView.hidden = YES;
+//    }
+//    else
+//    {
+//        badgeView.hidden = NO;
+//        if (count > 9) {
+//            badgeView.badgeText = [NSString stringWithFormat:@"N"];
+//        }
+//        else
+//        {
+//            badgeView.badgeText = [NSString stringWithFormat:@"%lld",count];
+//        }
+//    }
+//}
 
-- (void) didGetImage:(UIImage *)image forKbguid:(NSString *)guid
-{
-    if (![guid isEqualToString:self.kbguid]) {
-        return;
-    }
-    _imageView.image = image;
-}
+//- (void) didGetImage:(UIImage *)image forKbguid:(NSString *)guid
+//{
+//    if (![guid isEqualToString:self.kbguid]) {
+//        return;
+//    }
+//    _imageView.image = image;
+//}
 
 - (void) setBadgeCount
 {
     badgeView.hidden = YES;
-    if (self.kbguid == nil) {
+    if (IsEmptyString(self.kbguid.c_str())) {
         return;
-    }
-    [WGGlobalCache getUnreadCountByKbguid:self.kbguid accountUserId:self.accountUserId observer:self];
-    [[WGGlobalCache shareInstance] getAbstractImageForKbguid:self.kbguid accountUserId:self.accountUserId observer:self];
+    }   
+//    [WGGlobalCache getUnreadCountByKbguid:self.kbguid accountUserId:self.accountUserId observer:self];
+//    [[WGGlobalCache shareInstance] getAbstractImageForKbguid:self.kbguid accountUserId:self.accountUserId observer:self];
 }
 
 @end

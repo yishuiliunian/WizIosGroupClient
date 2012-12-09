@@ -12,6 +12,7 @@
 #import "WizFileManager.h"
 #import "WizGlobals.h"
 
+
 static void handleRootException ( NSException* exception)
 {
     NSString* name = [ exception name ];
@@ -68,6 +69,8 @@ static void handleRootException ( NSException* exception)
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    
+    
     NSSetUncaughtExceptionHandler(handleRootException);
     [self showLastCrash];
     WizAccountManager* accountManager = [WizAccountManager defaultManager];
