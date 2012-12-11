@@ -9,13 +9,14 @@
 #import <UIKit/UIKit.h> 
 #import "WGFeedBackViewController.h"
 #import <string>
-enum WGListType {
+typedef NS_ENUM(int, WGListType)
+{
     WGListTypeRecent = 0,
     WGListTypeTag = 1,
     WGListTypeUnread = 2,
     WGListTypeNoTags = 3,
     WGListTypeSearch    =4
-    };
+};
 @class WizGroup;
 
 
@@ -23,7 +24,7 @@ enum WGListType {
 
 @property (nonatomic, assign) std::string kbGuid;
 @property (nonatomic, assign) std::string accountUserId;
-@property (nonatomic, assign) enum WGListType listType;
+@property (nonatomic, assign) WGListType listType;
 @property (nonatomic, retain) NSString* listKey;
 @property (nonatomic, retain) WizGroup* kbGroup;
 

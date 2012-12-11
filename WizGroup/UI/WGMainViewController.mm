@@ -430,9 +430,9 @@ using namespace WizModule;
     NSString* activeAccountUserId = [[WizAccountManager defaultManager] activeAccountUserId];
     
     
-//    WGDetailViewController* detailCon = [[WGDetailViewController alloc] init];
-//    detailCon.kbGuid = group.kbguid;
-//    detailCon.accountUserId = activeAccountUserId;
+    WGDetailViewController* detailCon = [[WGDetailViewController alloc] init];
+    detailCon.kbGuid = group.kbGuid;
+    detailCon.accountUserId = group.accountUserId;
     //
     WGListViewController* listCon = [[WGListViewController alloc] init];
     listCon.kbGuid = group.kbGuid;
@@ -443,7 +443,7 @@ using namespace WizModule;
     
     PPRevealSideViewController* ppSideController = [[PPRevealSideViewController alloc] initWithRootViewController:centerNav];
     [ppSideController setDirectionsToShowBounce:PPRevealSideDirectionLeft];
-//    [ppSideController preloadViewController:detailCon forSide:PPRevealSideDirectionLeft];
+    [ppSideController preloadViewController:detailCon forSide:PPRevealSideDirectionLeft];
  
     CATransition *tran = [CATransition animation];
     tran.duration = .4f;
@@ -454,7 +454,7 @@ using namespace WizModule;
     [self.navigationController.view.layer addAnimation:tran forKey:@"TransitionDownUp"];
     [self.navigationController presentModalViewController:ppSideController animated:YES];
     
-//    [detailCon release];
+    [detailCon release];
     [listCon release];
     [ppSideController release];
     [centerNav release];

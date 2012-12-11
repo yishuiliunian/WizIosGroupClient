@@ -30,30 +30,31 @@
 using namespace WizModule;
 //
 #import "MBProgressHUD.h"
-
+#import "WizAccountManager.h"
 
 @interface WGListViewController () <WGReadListDelegate,
                                     EGORefreshTableHeaderDelegate,
                                     UISearchBarDelegate,
                                     UISearchDisplayDelegate,
-                                    WizXmlSyncKbDelegate>
+                                    WizXmlSyncKbDelegate
+                                    ,WizXmlSearchDelegate>
 {
     CWizDocumentsGroups documentsArray;
     BOOL    isRefreshing;
+    CWizDocumentDataArray searchDocArray;
+    
 }
 @property (nonatomic, retain) NSIndexPath* lastIndexPath;
 @property (nonatomic, retain) EGORefreshTableHeaderView* pullToRefreshView;
 @property (nonatomic, retain) UISearchBar* searchBar;
 @property (nonatomic ,retain) UISearchDisplayController* searchDisplayCon;
 @property (nonatomic, retain) NSMutableArray* searchHistoryArray;
-@property (nonatomic, retain) NSMutableArray* searchedDocumentsArray;
 @property (atomic, retain) NSString* searchKeyWords;
 @end
 
 @implementation WGListViewController
 @synthesize kbGuid;
 @synthesize searchKeyWords;
-@synthesize searchedDocumentsArray;
 @synthesize accountUserId;
 @synthesize listType;
 @synthesize listKey;
@@ -67,7 +68,6 @@ using namespace WizModule;
 {
     [[WizUINotifactionCenter shareInstance] removeObserver:self];
     [searchKeyWords release];
-    [searchedDocumentsArray release];
     [searchHistoryArray release];
     [searchDisplayCon release];
     [searchBar release];
@@ -151,6 +151,12 @@ using namespace WizModule;
 - (void) loadSearchDocuments
 {
 }
+
+- (void) reloadAllDataByDocuments:(CWizDocumentDataArray& )array
+{
+    documentsArray.setDocuments(array, CWizDocumentsSortedTypeByModifiedDateAsc);
+    [self.tableView reloadData];
+}
 - (void) reloadAllData
 {
     WizMetaDb metaDb([self getMetaDbPath].c_str());
@@ -163,18 +169,21 @@ using namespace WizModule;
             metaDb.documentsByTag(WizNSStringToCString(self.listKey), array);
             break;
         case WGListTypeUnread:
+            metaDb.unreadDocuments(array);
             break;
         case WGListTypeNoTags:
+            metaDb.documentsByNotag(array);
             break;
         case WGListTypeSearch:
+            array = searchDocArray;
             break;
         default:
             break;
     }
-    documentsArray.setDocuments(array, CWizDocumentsSortedTypeByModifiedDateAsc);
-//    for (CWizDocumentDataArray::const_iterator itor = array.begin(); itor != array.end(); itor++) {
-//        [WizSyncCenter downloadDocument:itor->strGUID kbguid:self.kbGuid account:self.accountUserId];
-//    }
+    documentsArray.setDocuments(array, CWizDocumentsSortedTypeByModifiedDateDesc);
+    for (CWizDocumentDataArray::const_iterator itor = array.begin(); itor != array.end(); itor++) {
+        [WizSyncCenter downloadDocument:itor->strGUID.c_str() kbguid:self.kbGuid.c_str() account:self.accountUserId.c_str()];
+    }
     [self.tableView reloadData];
 }
 
@@ -545,11 +554,15 @@ using namespace WizModule;
 {
     [MBProgressHUD showHUDAddedTo:self.searchDisplayCon.searchResultsTableView animated:YES];
     self.searchKeyWords = keyWords;
-//    WizApiSearch* search = [[[WizApiSearch alloc] initWithKbguid:self.kbGuid accountUserId:self.accountUserId apiDelegate:nil] autorelease];
-//    search.delegate = self;
-//    search.keyWords = keyWords;
-//    [WizSyncCenter runWizApi:search inQueue:[NSOperationQueue wizDownloadQueue]];
- 
+    WizSyncSearchOperation* searchOpration = [[WizSyncSearchOperation alloc] init];
+    searchOpration.kbguid = self.kbGuid;
+    searchOpration.accountUserId = self.accountUserId;
+    searchOpration.keyWords = WizNSStringToStdString(keyWords);
+    searchOpration.delegate = self;
+    searchOpration.password = [[WizAccountManager defaultManager] CAccountPasswordByUserId:self.accountUserId];
+    
+    [[NSOperationQueue backGroupQueue] addOperation:searchOpration];
+    [searchOpration release];
 }
 
 - (void) searchBarSearchButtonClicked:(UISearchBar *)searchBar_
@@ -557,29 +570,17 @@ using namespace WizModule;
     
     [self searchOnServer:searchBar_.text];
 }
-- (void) didSearchSucceed:(NSArray *)array
-{
-    [MBProgressHUD hideAllHUDsForView:self.searchDisplayCon.searchResultsTableView animated:YES];
-    
-//    NSLog(@"search key words is %@",self.searchKeyWords);
-//    
-//    id<WizTemporaryDataBaseDelegate> db = [[WizDbManager shareInstance] getGlobalCacheDb];
-//    [db updateWizSearch:self.searchKeyWords notesNumber:[array count] isSerchLocal:NO kbguid:self.kbGuid accountUserId:self.accountUserId];
-//    //
-//
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        self.searchedDocumentsArray = [NSMutableArray arrayWithArray:array];
-//        self.listKey = @"";
-//        self.listType = WGListTypeSearch;
-//        [self reloadAllData];
-//       [self.searchDisplayCon setActive:NO animated:YES]; 
-//    });
-    
-
-}
-- (void) didSearchError:(NSError *)error
+- (void) didSearchedFailed
 {
     NSLog(@"search faild");
 }
 
+- (void) didSearchedSucceed:(WizModule::CWizDocumentDataArray)array
+{
+    searchDocArray = array;
+    self.listType = WGListTypeSearch;
+    self.listKey = @"";
+     [MBProgressHUD hideAllHUDsForView:self.searchDisplayCon.searchResultsTableView animated:YES];
+    [self.searchDisplayCon setActive:NO animated:YES]; 
+}
 @end

@@ -217,6 +217,7 @@
 		87CFE88916719E6200EB2034 /* WizMisc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87CFE85016719E6200EB2034 /* WizMisc.cpp */; };
 		87CFE88B1671AE1D00EB2034 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87CFE88A1671AE1C00EB2034 /* SystemConfiguration.framework */; };
 		87CFE88F1672D8D300EB2034 /* WizSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 87CFE88E1672D8D300EB2034 /* WizSettings.m */; };
+		87CFE8921675D2A600EB2034 /* WizTreeNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 87CFE8911675D2A500EB2034 /* WizTreeNode.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -551,6 +552,8 @@
 		87CFE88A1671AE1C00EB2034 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		87CFE88D1672D8D300EB2034 /* WizSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WizSettings.h; sourceTree = "<group>"; };
 		87CFE88E1672D8D300EB2034 /* WizSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WizSettings.m; sourceTree = "<group>"; };
+		87CFE8901675D2A500EB2034 /* WizTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WizTreeNode.h; sourceTree = "<group>"; };
+		87CFE8911675D2A500EB2034 /* WizTreeNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WizTreeNode.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1336,6 +1339,8 @@
 				87CFE84F16719E6200EB2034 /* WizLogger.mm */,
 				87CFE85016719E6200EB2034 /* WizMisc.cpp */,
 				87CFE85116719E6200EB2034 /* WizMisc.h */,
+				87CFE8901675D2A500EB2034 /* WizTreeNode.h */,
+				87CFE8911675D2A500EB2034 /* WizTreeNode.mm */,
 			);
 			path = WizTools;
 			sourceTree = "<group>";
@@ -1614,6 +1619,7 @@
 				87CFE88816719E6200EB2034 /* WizLogger.mm in Sources */,
 				87CFE88916719E6200EB2034 /* WizMisc.cpp in Sources */,
 				87CFE88F1672D8D300EB2034 /* WizSettings.m in Sources */,
+				87CFE8921675D2A600EB2034 /* WizTreeNode.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

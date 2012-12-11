@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import <string>
 @interface WGDetailViewController : UITableViewController
-@property (nonatomic, retain) NSString* kbGuid;
-@property (nonatomic, retain) NSString* accountUserId;
+@property (nonatomic, assign) std::string kbGuid;
+@property (nonatomic, assign) std::string accountUserId;
 
 @end

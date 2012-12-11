@@ -161,7 +161,13 @@ static UIFont* timeFont = nil;
     [self doReloadUI];
 
 }
-
+- (void) reloadUI:(NSNotification*)nc
+{
+    NSString* guid = [WizNotificationCenter getGuidFromNc:nc];
+    if (nil != guid && [guid isEqualToString:WizStdStringToNSString(self.doc.strGUID)]) {
+        [self doReloadUI];
+    }
+}
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {

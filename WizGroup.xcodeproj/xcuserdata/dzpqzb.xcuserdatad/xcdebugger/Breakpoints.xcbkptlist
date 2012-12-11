@@ -81,5 +81,70 @@
          landmarkName = "-xmlrpcDoneSucced:forMethod:"
          landmarkType = "5">
       </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "WizIosSDK/WizCoreFunc/WizCore/WizApi/WizModuleTransfer.h"
+         timestampString = "376891191.887027"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "1336"
+         endingLineNumber = "1336"
+         landmarkName = "class CWizSmartPtr"
+         landmarkType = "3">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "WizIosSDK/WizCoreFunc/WizCore/WizApi/WizModuleTransfer.h"
+         timestampString = "376891191.887027"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "1338"
+         endingLineNumber = "1338"
+         landmarkName = "class CWizSmartPtr"
+         landmarkType = "3">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "WizIosSDK/WizCoreFunc/WizCore/WizApi/WizModuleTransfer.h"
+         timestampString = "376891191.887027"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "1340"
+         endingLineNumber = "1340"
+         landmarkName = "class CWizSmartPtr"
+         landmarkType = "3">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "WizIosSDK/WizCoreFunc/WizCore/WizApi/WizModuleTransfer.h"
+         timestampString = "376891191.887027"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "1342"
+         endingLineNumber = "1342"
+         landmarkName = "class CWizSmartPtr"
+         landmarkType = "3">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "WizIosSDK/WizCoreFunc/WizCore/WizTools/WizGlobals.mm"
+         timestampString = "376891962.817597"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "475"
+         endingLineNumber = "475"
+         landmarkName = "+reportError:"
+         landmarkType = "5">
+      </FileBreakpoint>
    </FileBreakpoints>
 </Bucket>
