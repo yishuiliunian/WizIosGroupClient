@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h> 
 #import "WGFeedBackViewController.h"
+#import "WizModuleTransfer.h"
 #import <string>
 typedef NS_ENUM(int, WGListType)
 {
@@ -22,11 +23,10 @@ typedef NS_ENUM(int, WGListType)
 
 @interface WGListViewController : UITableViewController<WGFeedBackViewControllerDelegate>
 
-@property (nonatomic, assign) std::string kbGuid;
+@property (nonatomic, assign) WizModule::WIZGROUPDATA groupData;
 @property (nonatomic, assign) std::string accountUserId;
 @property (nonatomic, assign) WGListType listType;
 @property (nonatomic, retain) NSString* listKey;
-@property (nonatomic, retain) WizGroup* kbGroup;
 
 - (void) reloadAllData;
 @end

@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import <string>
 @interface WGCreateNoteViewController : UIViewController<UITextViewDelegate,UITextFieldDelegate>
 
-@property (nonatomic, retain) NSString* kbGuid;
-@property (nonatomic, retain) NSString* accountUserId;
+@property (nonatomic, assign) std::string kbGuid;
+@property (nonatomic, assign) std::string accountUserId;
 @property (retain, nonatomic)UIScrollView* backgroundView;
 @property (retain, nonatomic)UITextField* titilView;
 @property (retain, nonatomic)UITextView* contentView;

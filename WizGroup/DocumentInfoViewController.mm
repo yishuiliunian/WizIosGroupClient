@@ -18,12 +18,6 @@
 
 @implementation DocumentInfoViewController
 @synthesize doc;
--(void) dealloc
-{
-    [doc release];
-    [super dealloc];
-    
-}
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
@@ -128,7 +122,7 @@
     }
     if (0 == indexPath.row) {
         cell.textLabel.text = WizStrTitle;
-        cell.detailTextLabel.text = doc.strTitle;
+        cell.detailTextLabel.text = WizStdStringToNSString(doc.strTitle);
     }
     
     if (1 == indexPath.row) {
@@ -141,16 +135,16 @@
     }
     else if (2 == indexPath.row) {
         cell.textLabel.text = WizStrFolders;
-        cell.detailTextLabel.text = [WizGlobals folderStringToLocal:self.doc.strLocation];
+        cell.detailTextLabel.text = [WizGlobals folderStringToLocal:WizStdStringToNSString(self.doc.strLocation)];
     }
     
     else if (3 == indexPath.row) {
         cell.textLabel.text =  WizStrDateModified;
-        cell.detailTextLabel.text =[doc.dateModified stringLocal];
+        cell.detailTextLabel.text =WizStdStringToNSString(self.doc.strDateModified);
     }
     else if (4 == indexPath.row) {
         cell.textLabel.text = WizStrDateCreated;
-        cell.detailTextLabel.text = [doc.dateCreated stringLocal];
+        cell.detailTextLabel.text = WizStdStringToNSString(self.doc.strDateCreated);
     }
 //    else if (5 == indexPath.row) {
 //        cell.textLabel.text = WizStrLocation;

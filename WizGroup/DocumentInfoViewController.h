@@ -7,12 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "WizModuleTransfer.h"
 @class WizDocument;
 @interface DocumentInfoViewController : UITableViewController
 {
-    WizDocument* doc;
     BOOL isEditTheDoc;
 }
-@property (nonatomic, retain) WizDocument* doc;
+@property (nonatomic, assign) WizModule::WIZDOCUMENTDATA doc;
 @property (nonatomic, assign) BOOL isEditTheDoc;
 @end

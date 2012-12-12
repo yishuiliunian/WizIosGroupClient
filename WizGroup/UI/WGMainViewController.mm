@@ -427,16 +427,11 @@ using namespace WizModule;
         return;
     }
     WIZGROUPDATA group = groupsArray.at(position);
-    NSString* activeAccountUserId = [[WizAccountManager defaultManager] activeAccountUserId];
-    
-    
     WGDetailViewController* detailCon = [[WGDetailViewController alloc] init];
-    detailCon.kbGuid = group.kbGuid;
-    detailCon.accountUserId = group.accountUserId;
+    detailCon.groupData = group;
     //
     WGListViewController* listCon = [[WGListViewController alloc] init];
-    listCon.kbGuid = group.kbGuid;
-    listCon.accountUserId = WizNSStringToStdString(activeAccountUserId);
+    listCon.groupData = group;
     listCon.listType = WGListTypeRecent;
     //
     WGNavigationViewController* centerNav = [[WGNavigationViewController alloc] initWithRootViewController:listCon];

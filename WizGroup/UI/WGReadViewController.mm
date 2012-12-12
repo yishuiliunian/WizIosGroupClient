@@ -63,14 +63,16 @@
         [checkNextButtonItem setEnabled:NO];
     }
 }
-- (WIZDOCUMENTDATA) getCurrentDocumentData
+- (bool) getCurrentDocumentData:(WIZDOCUMENTDATA&)doc
 {
     std::string dbPath = CWizFileManager::shareInstance()->metaDatabasePath(self.kbguid, self.accountUserId);
     WIZDOCUMENTDATA data;
     WizMetaDb db(dbPath.c_str());
     std::string documentGuid = [self.listDelegate currentDocumentGuid];
-    db.documentFromGUID(documentGuid.c_str(), data);
-    return data;
+    if (db.documentFromGUID(documentGuid.c_str(), doc)) {
+        return true;
+    }
+    return false;
 }
 
 - (void) setCheckPreDocumentButtonEnable
@@ -96,7 +98,10 @@
 - (void) didDownloadDocumentSucceed:(std::string)docGuid
 {
     if (docGuid == [self.listDelegate currentDocumentGuid]) {
-        [self loadDocument:[self getCurrentDocumentData]];
+        WIZDOCUMENTDATA data;
+        if ([self getCurrentDocumentData:data]) {
+            [self loadDocument:data];
+        }
     }
 }
 
@@ -151,14 +156,17 @@
 
 - (void) checkCurrentDocument
 {
-    WIZDOCUMENTDATA currentDoc = [self getCurrentDocumentData];
-    if (currentDoc.nServerChanged) {
-        [self downloadDocument:currentDoc.strGUID.c_str()];
+    WIZDOCUMENTDATA currentDoc;
+    if ([self getCurrentDocumentData:currentDoc]) {
+        if (currentDoc.nServerChanged) {
+            [self downloadDocument:currentDoc.strGUID.c_str()];
+        }
+        else
+        {
+            [self loadDocument:currentDoc];
+        }
     }
-    else
-    {
-        [self loadDocument:currentDoc];
-    }
+
      [self setCheckNextDocumentButtonEnable];
      [self setCheckPreDocumentButtonEnable];
 }
@@ -170,7 +178,6 @@
     }
    
 }
-//
 - (void) checkPreDocument
 {
     if ([self.listDelegate shouldCheckPreDocument]) {
@@ -216,21 +223,25 @@
 
 - (void) checkAttachment
 {
-//    WizCheckAttachments* check = [[WizCheckAttachments alloc] init];
-//    check.doc = [self.listDelegate currentDocument];
-//    check.kbguid = self.kbguid;
-//    check.accountUserId = self.accountUserId;
-//    WGNavigationViewController* nav = [[WGNavigationViewController alloc] initWithRootViewController:check];
-//    [self.navigationController presentModalViewController:nav animated:YES];
-//    [nav release];
-//    [check release];
+    WizCheckAttachments* check = [[WizCheckAttachments alloc] init];
+    check.docGuid = [self.listDelegate currentDocumentGuid];
+    check.kbguid = self.kbguid;
+    check.accountUserId = self.accountUserId;
+    WGNavigationViewController* nav = [[WGNavigationViewController alloc] initWithRootViewController:check];
+    [self.navigationController presentModalViewController:nav animated:YES];
+    [nav release];
+    [check release];
 }
 - (void) checkInfo
 {
-//    DocumentInfoViewController* infoCheck = [[DocumentInfoViewController alloc] initWithStyle:UITableViewStyleGrouped];
-//    infoCheck.doc = [self.listDelegate currentDocument];
-//    [self.navigationController pushViewController:infoCheck animated:YES];
-//    [infoCheck release];
+    WIZDOCUMENTDATA doc;
+    if ([self getCurrentDocumentData:doc]) {
+        DocumentInfoViewController* infoCheck = [[DocumentInfoViewController alloc] initWithStyle:UITableViewStyleGrouped];
+        infoCheck.doc = doc;
+        [self.navigationController pushViewController:infoCheck animated:YES];
+        [infoCheck release];
+    }
+    
 }
 
 - (void) customToolBar
@@ -259,7 +270,7 @@
 {
     if (!doc.nServerChanged) {
         if (![[WizFileManager shareManager] prepareReadingEnviroment:WizStdStringToNSString(doc.strGUID) accountUserId:WizStdStringToNSString(self.accountUserId)]) {
-            
+            return;
         }
         
         NSString* indexPath = [[WizFileManager shareManager] getDocumentFilePath:DocumentFileIndexName documentGUID:WizStdStringToNSString(doc.strGUID)];

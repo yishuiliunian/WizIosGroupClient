@@ -32,12 +32,14 @@
 
 @implementation WizCheckAttachments
 
-@synthesize document;
 @synthesize attachmentsArray;
 @synthesize waitAlert;
 @synthesize lastIndexPath;
 @synthesize currentPreview;
 @synthesize checkAttachmentDelegate;
+@synthesize docGuid;
+@synthesize accountUserId;
+@synthesize kbguid;
 - (void) dealloc
 {
     [[WizNotificationCenter defaultCenter] removeObserver:self];
@@ -88,9 +90,9 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-     std::string dbPath = CWizFileManager::shareInstance()->metaDatabasePath(WizNSStringToCString(self.kbguid),WizNSStringToCString(self.accountUserId)  );
+     std::string dbPath = CWizFileManager::shareInstance()->metaDatabasePath(self.kbguid.c_str(), self.accountUserId.c_str());
     WizMetaDb metadb(dbPath.c_str());
-    metadb.attachmentsForDocument(self.document.strGUID.c_str(), attachmentsArray);
+    metadb.attachmentsForDocument(self.docGuid.c_str(), attachmentsArray);
     self.title = NSLocalizedString(@"Attachments", nil);
 }
 
@@ -128,13 +130,15 @@
 {
     return self.attachmentsArray.size();
 }
-- (NSURL*) getAttachmentFileURL:(WizAttachment*)attachment
+- (NSURL*) getAttachmentFileURL:(const WIZDOCUMENTATTACH&)attachment
 {
-     NSString* attachmentFilePath  = [[WizFileManager shareManager] attachmentFilePath:attachment.strGuid accountUserId:self.accountUserId];
-    NSURL* url = [[NSURL alloc] initFileURLWithPath:attachmentFilePath];
-    return [url autorelease];
+    if ([[WizFileManager shareManager] prepareReadingEnviroment:WizStdStringToNSString(attachment.strGuid) accountUserId:WizStdStringToNSString(self.accountUserId)]) {
+        NSString* attachmentFilePath = [[WizFileManager shareManager] wizObjectFilePath:WizStdStringToNSString(attachment.strName) accountUserId:WizStdStringToNSString(self.accountUserId)];
+        return [[[NSURL alloc] initFileURLWithPath:attachmentFilePath] autorelease];
+    }
+    return nil;
 }
-- (BOOL) checkCanOpenInOtherApp:(WizAttachment*)attach
+- (BOOL) checkCanOpenInOtherApp:(const WIZDOCUMENTATTACH&)attach
 {
     NSURL* url = [self getAttachmentFileURL:attach];
     [currentPreview setURL:url];
@@ -151,6 +155,8 @@
     if (cell == nil) {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
     }
+    WIZDOCUMENTATTACH attachment = self.attachmentsArray.at(indexPath.row);
+//    NSString* attachType = WizStdStringToNSString(attachment.str)
 //    WizAttachment* attach = [self.attachmentsArray objectAtIndex:indexPath.row];
 //    if (attach.strType == nil || [attach.strType isEqualToString:@""]) {
 //        attach.strType = @"noneType";
@@ -185,11 +191,11 @@
 //    {
 //        cell.imageView.image = [UIImage imageNamed:@"icon_file_img"];
 //    }
-//    cell.textLabel.text = attach.strTitle;
+    cell.textLabel.text = WizStdStringToNSString(attachment.strName);
     cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
     return cell;
 }
-- (void) checkInWiz:(WizAttachment*)attachment
+- (void) checkInWiz:(const WIZDOCUMENTATTACH&)attachment
 {
 
     WizCheckAttachment* check = [[WizCheckAttachment alloc] initWithNibName:nil bundle:nil];;
@@ -205,7 +211,7 @@
     }
     [check release];
 }
-- (void) checkInOtherApp:(WizAttachment*)attachment
+- (void) checkInOtherApp:(const WIZDOCUMENTATTACH&)attachment
 {
     NSURL* url = [self getAttachmentFileURL:attachment];
     [currentPreview setURL:url];
@@ -214,61 +220,35 @@
         [WizGlobals reportWarningWithString:NSLocalizedString(@"There is no application can open this file.", nil)];
     }
 }
--(void) checkAttachment:(WizAttachment*) attachment inWiz:(BOOL)inWiz
+-(void) checkAttachment:(const WIZDOCUMENTATTACH&) attachment inWiz:(BOOL)inWiz
 {
-//    if (!attachment.bServerChanged) {
-//        if (inWiz) {
-//            [self checkInWiz:attachment];
-//        }
-//        else {
-//            [self checkInOtherApp:attachment];
-//        }
-//        
-//    }
-//    else
-//    {
-//        willCheckInWiz = inWiz;
-//        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-//        [[WizSyncCenter defaultCenter] downloadAttachment:attachment kbguid:self.kbguid accountUserId:self.accountUserId priority:WizDownloadPriorityHigh];
-//        [[WizNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadDone:) name:WizNMDidDownloadDocument object:nil];
-//    }
-    
-}
-- (BOOL) checkAttachmentIsThere:(NSString*)attachmentGUID
-{
-//    for (int i = 0; i<[self.attachments count]; i++) {
-//        WizAttachment* attach = [self.attachments objectAtIndex:i];
-//        if ([attach.strGuid isEqualToString:attachmentGUID]) {
-//            return YES;
-//        }
-//    }
-    return NO;
-}
+    if (!attachment.nServerChanged) {
+        if (inWiz) {
+            [self checkInWiz:attachment];
+        }
+        else {
+            [self checkInOtherApp:attachment];
+        }
+        
+    }
+    else
+    {
+        willCheckInWiz = inWiz;
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
 
-- (void) downloadDone:(NSNotification*)nc
-{
-    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-//    NSString* guid = [WizNotificationCenter getDocumentGuidFromNc:nc];
-//    if (guid == nil) {
-//        return;
-//    }
-//    WIZDOCUMENTATTACH attachment = self.attachmentsArray.at(indexPath.row);
-//    if ([guid isEqualToString:attachment.strGuid]) {
-//        [self checkAttachment:attachment inWiz:willCheckInWiz];
-//        [self.waitAlert dismissWithClickedButtonIndex:0 animated:YES];
-//        self.waitAlert = nil;
-//    }
+    }
+    
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     WIZDOCUMENTATTACH attachment = self.attachmentsArray.at(indexPath.row);
-//    self.lastIndexPath = indexPath;
-//    [self checkAttachment:attch inWiz:YES];
+    self.lastIndexPath = indexPath;
+    [self checkAttachment:attachment inWiz:YES];
 }
 - (void) tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
-//    WIZDOCUMENTATTACH attachment = self.attachmentsArray.at(indexPath.row);
-//    self.lastIndexPath = indexPath;
-//    [self checkAttachment:attch inWiz:NO];
+    WIZDOCUMENTATTACH attachment = self.attachmentsArray.at(indexPath.row);
+    self.lastIndexPath = indexPath;
+    [self checkAttachment:attachment inWiz:NO];
 }
 @end

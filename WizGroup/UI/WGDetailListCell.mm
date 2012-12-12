@@ -116,7 +116,7 @@ static UIFont* timeFont = nil;
     float titleWidth = endX - startX;
     float titleHeight = 20;
     //
-    float timeWidth = 80 - startX;
+    float timeWidth = 200 - startX;
     float timeHeight = 15;
     //
     float authorWidth = 80;

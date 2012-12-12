@@ -35,8 +35,7 @@ enum WGFolderListIndex {
 
 @implementation WGDetailViewController
 
-@synthesize kbGuid;
-@synthesize accountUserId;
+@synthesize groupData;
 - (void) dealloc
 {
     [titleView release];
@@ -112,7 +111,7 @@ enum WGFolderListIndex {
 
 - (void) reloadTagRootNode
 {
-    std::string dbPath =  CWizFileManager::shareInstance()->metaDatabasePath(self.kbGuid, self.accountUserId);
+    std::string dbPath =  CWizFileManager::shareInstance()->metaDatabasePath(self.groupData.kbGuid, self.groupData.accountUserId);
     WizMetaDb metaDb(dbPath.c_str());
     WizModule::CWizTagDataArray tagsArray;
     if (metaDb.allTagsForTree(tagsArray)) {
@@ -129,9 +128,7 @@ enum WGFolderListIndex {
     [customNodes addObject:WizStrRecent];
     [customNodes addObject:NSLocalizedString(@"Unread Notes", nil)];
     WIZGROUPDATA data;
-    if ([[WizAccountManager defaultManager] groupFroKbguid:self.kbGuid accountUserId:self.accountUserId groupData:data]) {
-       [customNodes addObject:WizStdStringToNSString(data.kbName)];
-    }
+   [customNodes addObject:WizStdStringToNSString(self.groupData.kbName)];
 }
 
 - (void )reloadAllTreeNodes
@@ -163,16 +160,12 @@ enum WGFolderListIndex {
     self.tableView.tableHeaderView = titleView;
     titleView.backgroundColor = [UIColor whiteColor];
     
-    WizModule::WIZGROUPDATA group;
-    if ([[WizAccountManager defaultManager] groupFroKbguid:self.kbGuid accountUserId:self.accountUserId groupData:group]) {
-        
         UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, self.view.frame.size.width - 20 -DefaultOffset, 30)];
-        titleLabel.text = WizStdStringToNSString(group.kbName);
+        titleLabel.text = WizStdStringToNSString(self.groupData.kbName);
         [titleView addSubview:titleLabel];
         titleLabel.backgroundColor = [UIColor clearColor];
         titleLabel.font = [UIFont boldSystemFontOfSize:20];
         [titleLabel release];
-    }
     
     
 }
@@ -281,7 +274,6 @@ enum WGFolderListIndex {
 {
     NSInteger row = NSNotFound;
     for (int i = 0 ; i < [self.needDisplayNodesArray count]; i++) {
-        
         TreeNode* eachNode = [self.needDisplayNodesArray objectAtIndex:i];
         if ([eachNode.keyString isEqualToString:node.keyString]) {
             row = i;

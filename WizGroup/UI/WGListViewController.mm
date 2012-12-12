@@ -1,4 +1,4 @@
-//
+
 //  WGListViewController.m
 //  WizGroup
 //
@@ -32,12 +32,26 @@ using namespace WizModule;
 #import "MBProgressHUD.h"
 #import "WizAccountManager.h"
 
+class CWizTestTime {
+    
+    NSDate* date;
+public:
+    CWizTestTime(){ date = [[NSDate date] retain];};
+    ~CWizTestTime()
+    {
+        NSDate* date2 = [NSDate date];
+        NSLog(@"spend time is %f", [date timeIntervalSinceDate:date2]);
+        [date release];
+    };
+};
+
 @interface WGListViewController () <WGReadListDelegate,
                                     EGORefreshTableHeaderDelegate,
                                     UISearchBarDelegate,
                                     UISearchDisplayDelegate,
                                     WizXmlSyncKbDelegate
-                                    ,WizXmlSearchDelegate>
+                                    ,WizXmlSearchDelegate
+                                    , WizUIEditDocumentDelegate>
 {
     CWizDocumentsGroups documentsArray;
     BOOL    isRefreshing;
@@ -53,17 +67,16 @@ using namespace WizModule;
 @end
 
 @implementation WGListViewController
-@synthesize kbGuid;
 @synthesize searchKeyWords;
 @synthesize accountUserId;
 @synthesize listType;
 @synthesize listKey;
 @synthesize lastIndexPath;
-@synthesize kbGroup;
 @synthesize pullToRefreshView;
 @synthesize searchBar;
 @synthesize searchDisplayCon;
 @synthesize searchHistoryArray;
+@synthesize groupData;
 - (void) dealloc
 {
     [[WizUINotifactionCenter shareInstance] removeObserver:self];
@@ -74,7 +87,6 @@ using namespace WizModule;
     [self removeObserver:self forKeyPath:@"listKey"];
     [[WizNotificationCenter defaultCenter] removeObserver:self];
     [pullToRefreshView release];
-    [kbGroup release];
     [listKey release];
     [lastIndexPath release];
     [super dealloc];
@@ -95,12 +107,13 @@ using namespace WizModule;
         isRefreshing = NO;
         //
         searchHistoryArray = [[NSMutableArray alloc] init];
+        [[WizUINotifactionCenter shareInstance] addEditDocumentObserver:self];
     }
     return self;
 }
 - (void) OnSyncKbBegin:(std::string)kbguid
 {
-   if (self.kbGuid == kbguid)
+   if (self.groupData.kbGuid== kbguid)
    {
        if(isRefreshing)
        {
@@ -112,7 +125,7 @@ using namespace WizModule;
 
 - (void) OnSyncKbEnd:(std::string)kbguid
 {
-    if (self.kbGuid == kbGuid) {
+    if (self.groupData.kbGuid == kbguid) {
         isRefreshing = NO;
         [self.pullToRefreshView egoRefreshScrollViewDataSourceDidFinishedLoading:self.tableView];
         [self reloadAllData];
@@ -125,7 +138,7 @@ using namespace WizModule;
 }
 - (std::string) getMetaDbPath
 {
-    return CWizFileManager::shareInstance()->metaDatabasePath(self.kbGuid.c_str(), self.accountUserId.c_str());
+    return CWizFileManager::shareInstance()->metaDatabasePath(self.groupData.kbGuid.c_str(), self.groupData.accountUserId.c_str());
 }
 - (void) loadRecentsDocument:(CWizDocumentDataArray&)array
 {
@@ -133,58 +146,43 @@ using namespace WizModule;
     if (!metaDb.recentDocuments(array)) {
         return;
     }
-    self.title = [NSString stringWithFormat:@"%@(%@)",self.kbGroup.kbName, NSLocalizedString(@"Recent", nil)];
+//    self.title = [NSString stringWithFormat:@"%@(%@)",self.kbGroup.kbName, NSLocalizedString(@"Recent", nil)];
 }
 
-- (void) loadTagDocument:(CWizDocumentDataArray&)array
-{
-}
 
-- (void) loadUnreadDocument
-{
-    self.title = WizStrUnreadNotes;
-}
-- (void) loadNotagDocuments
-{
-    self.title = self.kbGroup.kbName;
-}
-- (void) loadSearchDocuments
-{
-}
 
 - (void) reloadAllDataByDocuments:(CWizDocumentDataArray& )array
 {
     documentsArray.setDocuments(array, CWizDocumentsSortedTypeByModifiedDateAsc);
     [self.tableView reloadData];
 }
+
 - (void) reloadAllData
 {
-    WizMetaDb metaDb([self getMetaDbPath].c_str());
-    CWizDocumentDataArray array;
-    switch (listType) {
-        case WGListTypeRecent:
-            metaDb.recentDocuments(array);
-            break;
-        case WGListTypeTag:
-            metaDb.documentsByTag(WizNSStringToCString(self.listKey), array);
-            break;
-        case WGListTypeUnread:
-            metaDb.unreadDocuments(array);
-            break;
-        case WGListTypeNoTags:
-            metaDb.documentsByNotag(array);
-            break;
-        case WGListTypeSearch:
-            array = searchDocArray;
-            break;
-        default:
-            break;
-    }
-    documentsArray.setDocuments(array, CWizDocumentsSortedTypeByModifiedDateDesc);
-    for (CWizDocumentDataArray::const_iterator itor = array.begin(); itor != array.end(); itor++) {
-        [WizSyncCenter downloadDocument:itor->strGUID.c_str() kbguid:self.kbGuid.c_str() account:self.accountUserId.c_str()];
-    }
-    [self.tableView reloadData];
+    CWizTestTime testTime;
+        WizMetaDb metaDb([self getMetaDbPath].c_str());
+        CWizDocumentDataArray array;
+        switch (listType) {
+            case WGListTypeRecent:
+                metaDb.recentDocuments(array);
+                break;
+            case WGListTypeTag:
+                metaDb.documentsByTag(WizNSStringToCString(self.listKey), array);
+                break;
+            case WGListTypeUnread:
+                metaDb.unreadDocuments(array);
+                break;
+            case WGListTypeNoTags:
+                metaDb.documentsByNotag(array);
+                break;
+            case WGListTypeSearch:
+                array = searchDocArray;
+                break;
+            default:
+                break;
+        }
+        documentsArray.setDocuments(array, CWizDocumentsSortedTypeByModifiedDateDesc);
+        [self.tableView reloadData]; 
 }
 
 
@@ -201,11 +199,11 @@ using namespace WizModule;
 }
 - (void) editComment
 {
-//    WGCreateNoteViewController* editCommentVC = [[WGCreateNoteViewController alloc]init];
-//    editCommentVC.kbGuid = self.kbGuid;
-//    editCommentVC.accountUserId = self.accountUserId;
-//    [self.navigationController presentModalViewController:editCommentVC animated:YES];
-//    [editCommentVC release];
+    WGCreateNoteViewController* editCommentVC = [[WGCreateNoteViewController alloc]init];
+    editCommentVC.kbGuid = self.groupData.kbGuid;
+    editCommentVC.accountUserId = self.groupData.accountUserId;
+    [self.navigationController presentModalViewController:editCommentVC animated:YES];
+    [editCommentVC release];
 }
 - (void) feedbackCenter
 {
@@ -244,8 +242,8 @@ using namespace WizModule;
 
     UIBarButtonItem* editCommentItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"listEditIcon"] hightedImage:nil target:self selector:@selector(editComment)];
     
-    UIBarButtonItem* feedBackItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"listFeedbackIcon"] hightedImage:nil target:self selector:@selector(feedbackCenter)];
-    [nav setWgToolItems:@[searchItem,flexItem,editCommentItem,feedBackItem]];
+//    UIBarButtonItem* feedBackItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"listFeedbackIcon"] hightedImage:nil target:self selector:@selector(feedbackCenter)];
+    [nav setWgToolItems:@[searchItem,flexItem,editCommentItem]];
 }
 
 - (void) viewWillAppear:(BOOL)animated
@@ -253,9 +251,9 @@ using namespace WizModule;
     [super viewWillAppear:animated];
     [self.navigationController setToolbarHidden:NO];
     [self.navigationController setNavigationBarHidden:NO];
-    [self reloadAllData];
     [self reloadToolBarItems];
     self.revealSideViewController.panInteractionsWhenClosed = PPRevealSideInteractionContentView | PPRevealSideInteractionNavigationBar;
+    [self reloadAllData];
 }
 - (void) viewWillDisappear:(BOOL)animated
 {
@@ -264,7 +262,7 @@ using namespace WizModule;
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [[WizUINotifactionCenter shareInstance] addObserver:self kbguid:(self.kbGuid)];
+    [[WizUINotifactionCenter shareInstance] addObserver:self kbguid:(self.groupData.kbGuid)];
 }
 
 - (void) viewDidDisappear:(BOOL)animated
@@ -297,7 +295,6 @@ using namespace WizModule;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self reloadAllData];
     [self customizeNavBar];
     
     
@@ -322,7 +319,7 @@ using namespace WizModule;
     
     //
     
-//    isRefreshing = [[WizSyncCenter defaultCenter]  isRefreshingGroup:self.kbGuid accountUserId:self.accountUserId];
+    isRefreshing = [WizUINotifactionCenter isSyncingGuid:self.groupData.kbGuid];
     if (isRefreshing) {
         [self.pullToRefreshView startLoadingAnimation:self.tableView];
     }
@@ -409,8 +406,8 @@ using namespace WizModule;
     }
     WIZDOCUMENTDATA doc = documentsArray.getDocument(indexPath.section, indexPath.row);
     cell.doc = doc;
-    cell.kbguid= self.kbGuid;
-    cell.accountUserId = self.accountUserId;
+    cell.kbguid= self.groupData.kbGuid;
+    cell.accountUserId = self.groupData.accountUserId;
     return cell;
 }
 
@@ -456,8 +453,8 @@ using namespace WizModule;
     //
     self.lastIndexPath = indexPath;
     WGReadViewController* readController = [[WGReadViewController alloc] init];
-    readController.kbguid = self.kbGuid;
-    readController.accountUserId = self.accountUserId;
+    readController.kbguid = self.groupData.kbGuid;
+    readController.accountUserId = self.groupData.accountUserId;
     readController.listDelegate = self;
     
     
@@ -480,33 +477,74 @@ using namespace WizModule;
 - (BOOL) shouldCheckNextDocument
 {
     if (self.lastIndexPath != nil) {
+        int groupCount = documentsArray.getDocumentCount(self.lastIndexPath.section);
+        int nextRow = self.lastIndexPath.row+1;
+        if (nextRow < groupCount) {
+            return YES;
+        }
+        else
+        {
+            if (self.lastIndexPath.section < documentsArray.getGroupCount()) {
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
+- (void) moveToNextDocument
+{
+    if ([self shouldCheckNextDocument]) {
+        int groupCount = documentsArray.getDocumentCount(self.lastIndexPath.section);
+        int nextRow = self.lastIndexPath.row+1;
+        if (nextRow < groupCount) {
+            self.lastIndexPath = [NSIndexPath indexPathForRow:nextRow inSection:self.lastIndexPath.section];
+        }
+        else
+        {
+            if (self.lastIndexPath.section < documentsArray.getGroupCount() -1) {
+                self.lastIndexPath = [NSIndexPath indexPathForRow:0 inSection:self.lastIndexPath.section +1];
+            }
+        }
+ 
+    }
+}
+
+- (BOOL) shouldCheckPreDocument
+{
+    if (self.lastIndexPath != nil) {
+        if (self.lastIndexPath.row > 0) {
+            return YES;
+        }
+        else
+        {
+            if (self.lastIndexPath.section > 0) {
+                return YES;
+            }
+        }
     }
     return NO;
 }
 //
-//- (void) moveToNextDocument
-//{
-//    if ([self shouldCheckNextDocument]) {
-//        self.lastIndexPath = [NSIndexPath indexPathForRow:self.lastIndexPath.row+1 inSection:0];
-//    }
-//}
-//
-- (BOOL) shouldCheckPreDocument
+- (void) moveToPreDocument
 {
-    
-    return NO;
+    if (self.lastIndexPath != nil) {
+        if (self.lastIndexPath.row > 0) {
+            self.lastIndexPath = [NSIndexPath indexPathForRow:self.lastIndexPath.row-1 inSection:self.lastIndexPath.section];
+        }
+        else
+        {
+            if (self.lastIndexPath.section > 0) {
+                int preSection = self.lastIndexPath.section - 1;
+                self.lastIndexPath = [NSIndexPath indexPathForRow:documentsArray.getDocumentCount(preSection)-1 inSection:preSection];
+            }
+        }
+    }
 }
-//
-//- (void) moveToPreDocument
-//{
-//    if ([self shouldCheckPreDocument]) {
-//        self.lastIndexPath = [NSIndexPath indexPathForRow:self.lastIndexPath.row -1 inSection:0];
-//    }
-//}
 - (void) refreshGroupData
 {
     [WizSyncCenter defaultCenter] ;
-    [WizSyncCenter syncKbGuid:self.kbGuid account:self.accountUserId isOnlyUpload:NO userGroup:0];
+    [WizSyncCenter syncKbGuid:self.groupData.kbGuid account:self.groupData.accountUserId isOnlyUpload:NO userGroup:0];
 }
 - (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -555,12 +593,11 @@ using namespace WizModule;
     [MBProgressHUD showHUDAddedTo:self.searchDisplayCon.searchResultsTableView animated:YES];
     self.searchKeyWords = keyWords;
     WizSyncSearchOperation* searchOpration = [[WizSyncSearchOperation alloc] init];
-    searchOpration.kbguid = self.kbGuid;
-    searchOpration.accountUserId = self.accountUserId;
+    searchOpration.kbguid = self.groupData.kbGuid;
+    searchOpration.accountUserId = self.groupData.accountUserId;
     searchOpration.keyWords = WizNSStringToStdString(keyWords);
     searchOpration.delegate = self;
-    searchOpration.password = [[WizAccountManager defaultManager] CAccountPasswordByUserId:self.accountUserId];
-    
+    searchOpration.password = [[WizAccountManager defaultManager] CAccountPasswordByUserId:self.groupData.accountUserId];
     [[NSOperationQueue backGroupQueue] addOperation:searchOpration];
     [searchOpration release];
 }
@@ -583,4 +620,50 @@ using namespace WizModule;
      [MBProgressHUD hideAllHUDsForView:self.searchDisplayCon.searchResultsTableView animated:YES];
     [self.searchDisplayCon setActive:NO animated:YES]; 
 }
+
+- (void) didUpdateDocument:(const char *)docGuid
+{
+    
+}
+
+- (void) didDeletedDocument:(const char *)docGuid
+{
+    WizMetaDb db([self getMetaDbPath].c_str());
+    WIZDOCUMENTDATA doc;
+    if (db.documentFromGUID(docGuid, doc)) {
+        int group;
+        int row;
+        if (documentsArray.removeDocument(doc, group, row)) {
+            NSIndexPath* deletedIndexPath = [NSIndexPath indexPathForRow:row inSection:group];
+            [self.tableView deleteRowsAtIndexPaths:@[deletedIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+        }
+    }
+}
+- (void) didInsertDocumentLocal:(const char *)docGuid
+{
+    WizMetaDb db([self getMetaDbPath].c_str());
+    WIZDOCUMENTDATA doc;
+    if (db.documentFromGUID(docGuid, doc)) {
+        if (listType != WGListTypeRecent) {
+            return;
+        }
+        int groupIndex;
+        int rowIndex;
+        bool groupCreated;
+        documentsArray.insertDocument(doc, groupCreated, groupIndex, rowIndex);
+        if (groupCreated) {
+            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:groupIndex] withRowAnimation:UITableViewRowAnimationFade];
+        }
+        else
+        {
+            [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:rowIndex inSection:groupIndex]] withRowAnimation:UITableViewRowAnimationFade];
+        }
+    }
+}
+
+- (void) didInsertDocument:(const char *)docGuid
+{
+    
+}
+
 @end

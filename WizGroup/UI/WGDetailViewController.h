@@ -8,8 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <string>
+#import "WizModuleTransfer.h"
 @interface WGDetailViewController : UITableViewController
-@property (nonatomic, assign) std::string kbGuid;
-@property (nonatomic, assign) std::string accountUserId;
-
+@property (nonatomic, assign) WizModule::WIZGROUPDATA groupData;
 @end

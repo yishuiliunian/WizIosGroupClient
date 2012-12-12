@@ -15,9 +15,9 @@ using namespace WizModule;
     id <WizPadCheckAttachmentDelegate> checkAttachmentDelegate;
     
 }
-@property (nonatomic, assign) WIZDOCUMENTDATA document;
-@property (nonatomic, assign)    id <WizPadCheckAttachmentDelegate> checkAttachmentDelegate;
-@property (nonatomic, retain) NSString* kbguid;
-@property (nonatomic, retain) NSString* accountUserId;
+@property (nonatomic, assign) std::string docGuid;
+@property (nonatomic, assign) id <WizPadCheckAttachmentDelegate> checkAttachmentDelegate;
+@property (nonatomic,  assign) std::string kbguid;
+@property (nonatomic, assign) std::string accountUserId;
 - (void) downloadDone:(NSNotification*)nc;
 @end
