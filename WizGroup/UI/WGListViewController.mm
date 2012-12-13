@@ -27,6 +27,7 @@
 #import "WGCreateNoteViewController.h"
 #import "WizModuleTransfer.h"
 #import "WizMetaDb.h"
+#import "WizSettings.h"
 using namespace WizModule;
 //
 #import "MBProgressHUD.h"
@@ -240,7 +241,7 @@ public:
     [nav setWgToolItems:@[searchItem,flexItem]];
     
 
-    UIBarButtonItem* editCommentItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"listEditIcon"] hightedImage:nil target:self selector:@selector(editComment)];
+    UIBarButtonItem* editCommentItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"doc_list_new"] hightedImage:nil target:self selector:@selector(editComment)];
     
 //    UIBarButtonItem* feedBackItem = [WGBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"listFeedbackIcon"] hightedImage:nil target:self selector:@selector(feedbackCenter)];
     [nav setWgToolItems:@[searchItem,flexItem,editCommentItem]];
@@ -346,7 +347,10 @@ public:
 
 - (NSString*) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    return WizStdStringToNSString(documentsArray.getGroupName(section));
+    if ([tableView isEqual:self.tableView]) {
+       return WizStdStringToNSString(documentsArray.getGroupName(section)); 
+    }
+    return nil;
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -391,7 +395,7 @@ public:
 //    WizSearch* search = [self.searchHistoryArray objectAtIndex:indexPath.row];
 //    cell.textLabel.text = search.strKeyWords;
 //    cell.detailTextLabel.text = [search.dateLastSearched stringLocal];
-    return cell;
+    return nil;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -470,10 +474,6 @@ public:
     }
     return "";
 }
-//- (WizDocument*) currentDocument
-//{
-//}
-//
 - (BOOL) shouldCheckNextDocument
 {
     if (self.lastIndexPath != nil) {
@@ -574,7 +574,7 @@ public:
 
 - (NSDate*) egoRefreshTableHeaderDataSourceLastUpdated:(EGORefreshTableHeaderView *)view
 {
-//    return [db lastUpdateTimeForGroup:self.kbGuid accountUserId:self.accountUserId];
+    return [[WizSettings shareInstance] lastUpdateDateForKey:WizStdStringToNSString(self.groupData.kbGuid)];
 }
 
 

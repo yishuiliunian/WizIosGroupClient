@@ -190,7 +190,7 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "WizGroup/UI/WGListViewController.mm"
-         timestampString = "376984849.889795"
+         timestampString = "377057219.176736"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "635"
@@ -248,45 +248,6 @@
          startingLineNumber = "115"
          endingLineNumber = "115"
          landmarkName = "+syncKbGuid:account:isOnlyUpload:userGroup:"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "WizIosSDK/WizCoreFunc/WizCore/WizApi/WizXmlServer.mm"
-         timestampString = "376991430.294568"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "895"
-         endingLineNumber = "895"
-         landmarkName = "WizXmlSyncKb::uploadDocument(WizModule::WIZDOCUMENTDATA &amp;doc, const char *tempFilePath)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "WizIosSDK/WizCoreFunc/WizCore/WizApi/WizXmlServer.mm"
-         timestampString = "376991768.931586"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "896"
-         endingLineNumber = "896"
-         landmarkName = "WizXmlSyncKb::uploadDocument(WizModule::WIZDOCUMENTDATA &amp;doc, const char *tempFilePath)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "WizIosSDK/WizCoreFunc/WizCore/WizApi/WizXmlServer.mm"
-         timestampString = "376991958.46247"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "888"
-         endingLineNumber = "888"
-         landmarkName = "WizXmlSyncKb::uploadDocument(WizModule::WIZDOCUMENTDATA &amp;doc, const char *tempFilePath)"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

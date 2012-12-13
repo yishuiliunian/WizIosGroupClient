@@ -18,6 +18,7 @@
 
 @implementation DocumentInfoViewController
 @synthesize doc;
+@synthesize isEditTheDoc;
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
